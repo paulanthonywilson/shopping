@@ -18,12 +18,6 @@ defmodule ShoppingWeb.Router do
     pipe_through :browser
 
     get "/", RootController, :index
-
-    live "/lists", ListLive.Index, :index
-    live "/lists/new", ListLive.Index, :new
-
-    live "/lists/:id", ListLive.Show, :show
-    live "/lists/:id/show/edit", ListLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
