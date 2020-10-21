@@ -16,6 +16,13 @@ defmodule ShoppingWeb.Router do
 
   scope "/", ShoppingWeb do
     pipe_through :browser
+    
+    live "/checklists", ChecklistLive.Index, :index
+    live "/checklists/new", ChecklistLive.Index, :new
+    live "/checklists/:id/edit", ChecklistLive.Index, :edit
+
+    live "/checklists/:id", ChecklistLive.Show, :show
+    live "/checklists/:id/show/edit", ChecklistLive.Show, :edit
 
     get "/", RootController, :index
   end

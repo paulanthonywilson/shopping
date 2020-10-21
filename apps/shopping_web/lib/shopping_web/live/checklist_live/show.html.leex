@@ -1,0 +1,11 @@
+<h1><%= live_patch @checklist.name, to: Routes.checklist_show_path(@socket, :edit, @checklist), class: "button-clear" %></h1>
+
+<%= if @live_action in [:edit] do %>
+  <%= live_modal @socket, ShoppingWeb.ChecklistLive.FormComponent,
+    id: @checklist.id,
+    title: @page_title,
+    action: @live_action,
+    checklist: @checklist,
+    return_to: Routes.checklist_show_path(@socket, :show, @checklist) %>
+<% end %>
+

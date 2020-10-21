@@ -5,6 +5,6 @@ defmodule ShoppingWeb.RootController do
   use ShoppingWeb, :controller
 
   def index(conn, _params) do
-    redirect(conn, to: "/lists")
+    redirect(conn, to: "/checklists")
   end
 end
