@@ -40,7 +40,10 @@ defmodule Shopping.ChecklistsTest do
 
     test "update_checklist/2 with valid data updates the checklist" do
       checklist = checklist_fixture()
-      assert {:ok, %Checklist{} = checklist} = Checklists.update_checklist(checklist, @update_attrs)
+
+      assert {:ok, %Checklist{} = checklist} =
+               Checklists.update_checklist(checklist, @update_attrs)
+
       assert checklist.name == "some updated name"
     end
 

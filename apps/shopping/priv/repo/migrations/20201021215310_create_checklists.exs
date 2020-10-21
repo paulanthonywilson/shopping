@@ -7,6 +7,5 @@ defmodule Shopping.Repo.Migrations.CreateChecklists do
 
       timestamps()
     end
-
   end
 end

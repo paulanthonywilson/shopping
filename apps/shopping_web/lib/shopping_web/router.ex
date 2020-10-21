@@ -16,7 +16,7 @@ defmodule ShoppingWeb.Router do
 
   scope "/", ShoppingWeb do
     pipe_through :browser
-    
+
     live "/checklists", ChecklistLive.Index, :index
     live "/checklists/new", ChecklistLive.Index, :new
     live "/checklists/:id/edit", ChecklistLive.Index, :edit
