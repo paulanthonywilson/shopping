@@ -30,7 +30,34 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply, socket}
   end
 
+  def handle_event("change-got", %{"id" => id} = params, socket) do
+    value = params["value"] || false
+    IO.inspect(value)
+    Items.change_got_to(id, value)
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({"item-change-importance", item}, socket) do
+    to_get =
+      socket.assigns
+      |> Map.get(:to_get)
+      |> Items.update_in_list_of_items(item)
+
+    {:noreply, assign(socket, to_get: to_get)}
+  end
+
+  def handle_info({"item-change-got", %{got?: true} = item}, socket) do
+    %{got: got, to_get: to_get} = socket.assigns
+
+    {:noreply,
+     assign(socket,
+       got: [item | got],
+       to_get: Items.remove_item_from_list(to_get, item)
+     )}
+  end
+
+  def handle_info(_, socket) do
     {:noreply, socket}
   end
 

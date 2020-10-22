@@ -103,7 +103,6 @@ defmodule ShoppingWeb.ChecklistLiveTest do
       render_hook(live_view, "change-importance", %{id: to_string(item.id)})
 
       refute Items.get_item!(item.id).important?
-
     end
   end
 end

@@ -14,11 +14,23 @@ nav.navigation {
     }
 }
 
+h1 {
+    font-size: 2rem;
+    text-align: center;
+}
+
 
 .item_list {
+    caption {
+        font-size: 2rem;
+    }
     padding-left: 0.5em;
     input[type="checkbox"] {
         transform:scale(1.5, 1.5);
+    }
+
+    td.check {
+        padding: 0 1em;
     }
 
     .name {

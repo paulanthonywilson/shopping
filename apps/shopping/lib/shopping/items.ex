@@ -9,6 +9,8 @@ defmodule Shopping.Items do
   alias Shopping.Checklists.Checklist
   alias Shopping.Items.{Item, ItemsByGot}
 
+  @type id :: pos_integer()
+
   @topic "shopping-items"
 
   @doc """
@@ -108,8 +110,31 @@ defmodule Shopping.Items do
     %ItemsByGot{got: got, to_get: to_get}
   end
 
+  @doc """
+  Change whether an item has been got or not. Also resets `important?` to
+  false
+  """
+  @spec change_got_to(Item.t() | id(), boolean) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
+  def change_got_to(%Item{} = item, value) do
+    item
+    |> update_item(%{important?: false, got?: value})
+    |> maybe_broadcast("item-change-got")
+  end
+
+  def change_got_to(item_id, value) do
+    item_id
+    |> get_item!()
+    |> change_got_to(value)
+  end
+
+  @doc """
+  Marks an item as important
+  """
+  @spec change_importance_to(Item.t() | id(), boolean) ::
+          {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def change_importance_to(%Item{} = item, value) do
-    update_item(item, %{important?: value})
+    item
+    |> update_item(%{important?: value})
     |> maybe_broadcast("item-change-importance")
   end
 
@@ -119,20 +144,56 @@ defmodule Shopping.Items do
     |> change_importance_to(value)
   end
 
-  def update_importance_in_list_of_items(items, changed_item) do
-    case Enum.find_index(items, fn item -> item.id == changed_item.id end) do
-      nil ->
-        items
-
-      i ->
-        List.replace_at(items, i, changed_item)
-        |> sort_in_order_of_importance()
+  @doc """
+  Remove the item matching the id of this item in the list of items
+  """
+  @spec remove_item_from_list(list(Item.t()), Item.t()) :: list(Item.t())
+  def remove_item_from_list(items, remove_me) do
+    case remove_item_from_list(items, remove_me, []) do
+      {:found, new_items} -> new_items
+      :notfound -> items
     end
   end
 
-  
+  defp remove_item_from_list([], _remove_me, _acc) do
+    :notfound
+  end
 
-  defp sort_in_order_of_importance(items) do
+  defp remove_item_from_list([%{id: id} | t], %{id: id}, acc) do
+    {:found, Enum.reverse(acc, t)}
+  end
+
+  defp remove_item_from_list([h | tail], remove_me, acc) do
+    remove_item_from_list(tail, remove_me, [h | acc])
+  end
+
+  @doc """
+  Replace the item matching the id in the list of items
+  """
+  @spec update_in_list_of_items(list(Item.t()), Item.t()) :: list(Item.t())
+  def update_in_list_of_items(items, changed_item) do
+    case update_in_list_of_items(items, changed_item, []) do
+      :notfound -> items
+      {:found, new_items} -> new_items
+    end
+  end
+
+  defp update_in_list_of_items([], _changed_item, _acc) do
+    :notfound
+  end
+
+  defp update_in_list_of_items([%{id: id} | t], %{id: id} = changed_item, acc) do
+    {:found,
+     [changed_item | acc]
+     |> Enum.reverse(t)
+     |> sort_in_order_of_importance()}
+  end
+
+  defp update_in_list_of_items([h | t], changed_item, acc) do
+    update_in_list_of_items(t, changed_item, [h | acc])
+  end
+
+  def sort_in_order_of_importance(items) do
     Enum.sort_by(items, &{!&1.important?, &1.lcase_name})
   end
 

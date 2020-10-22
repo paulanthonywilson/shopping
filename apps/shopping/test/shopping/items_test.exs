@@ -146,7 +146,34 @@ defmodule Shopping.ItemsTest do
     end
   end
 
-  describe "update_importance_in_list_of_items" do
+  describe "change got?" do
+    test "not got to got", %{checklist: checklist} do
+      Items.subscribe()
+      item = item_fixture(checklist, %{got?: false, important?: true})
+      assert {:ok, changed} = Items.change_got_to(item, true)
+      assert changed == Items.get_item!(item.id)
+
+      assert changed.got?
+      refute changed.important?
+
+      assert_receive {"item-change-got", ^changed}
+    end
+
+    test "got to not got", %{checklist: checklist} do
+      Items.subscribe()
+      item = item_fixture(checklist, %{got?: true, important?: true})
+
+      assert {:ok, changed} = Items.change_got_to(item.id, false)
+      assert changed == Items.get_item!(item.id)
+
+      refute changed.got?
+      refute changed.important?
+
+      assert_receive {"item-change-got", ^changed}
+    end
+  end
+
+  describe "update in list of items" do
     test "item is in list" do
       items = for i <- 1..10, do: %Item{important?: false, id: i, name: "Item #{i}"}
 
@@ -156,7 +183,7 @@ defmodule Shopping.ItemsTest do
         name: "Item 5"
       }
 
-      new_items = Items.update_importance_in_list_of_items(items, change)
+      new_items = Items.update_in_list_of_items(items, change)
 
       assert length(new_items) == 10
       assert [^change | _] = new_items
@@ -165,8 +192,28 @@ defmodule Shopping.ItemsTest do
     test "item is not in list" do
       items = for i <- 1..10, do: %Item{important?: false, id: i, name: "Item #{i}"}
 
-      new_items =
-        Items.update_importance_in_list_of_items(items, %Item{id: 11, important?: false})
+      new_items = Items.update_in_list_of_items(items, %Item{id: 11, important?: false})
+
+      assert new_items == items
+    end
+  end
+
+  describe "remove from list of items" do
+    test "item is in list" do
+      items = for i <- 1..10, do: %Item{important?: false, id: i, name: "Item #{i}"}
+
+      [_, _, _, remove | _] = items
+
+      new_items = Items.remove_item_from_list(items, remove)
+
+      assert remove.id not in Enum.map(new_items, & &1.id)
+      assert length(new_items) == 9
+    end
+
+    test "item is not in list" do
+      items = for i <- 1..10, do: %Item{important?: false, id: i, name: "Item #{i}"}
+
+      new_items = Items.update_in_list_of_items(items, %Item{id: 11, important?: false})
 
       assert new_items == items
     end
