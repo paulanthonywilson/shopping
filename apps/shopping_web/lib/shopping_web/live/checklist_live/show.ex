@@ -2,7 +2,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   use ShoppingWeb, :live_view
 
   alias Shopping.{Checklists, Items}
-  alias ShoppingWeb.ListItemsToGetComponent
+  alias ShoppingWeb.{ListItemsToGetComponent, ListItemsGotComponent}
 
   @impl true
   def mount(_params, _session, socket) do
@@ -54,6 +54,16 @@ defmodule ShoppingWeb.ChecklistLive.Show do
      assign(socket,
        got: [item | got],
        to_get: Items.remove_item_from_list(to_get, item)
+     )}
+  end
+
+  def handle_info({"item-change-got", %{got?: false} = item}, socket) do
+    %{got: got, to_get: to_get} = socket.assigns
+
+    {:noreply,
+     assign(socket,
+       got: Items.remove_item_from_list(got, item) ,
+       to_get: Items.sort_in_order_of_importance([item | to_get])
      )}
   end
 
