@@ -2,6 +2,8 @@ defmodule Shopping.Items.Item do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{}
+
   schema "items" do
     field :got?, :boolean, default: false
     field :important?, :boolean, default: false

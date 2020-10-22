@@ -4,26 +4,24 @@ defmodule Shopping.ItemsTest do
   alias Shopping.{Items, Checklists}
   alias Items.Item
 
+  @valid_attrs %{got?: true, important?: true, name: "Some name"}
+  @update_attrs %{got?: false, important?: false, name: "Some updated name"}
+  @invalid_attrs %{got?: nil, important?: nil, name: nil}
+
+  setup do
+    {:ok, checklist} = Checklists.create_checklist(%{name: "some checklist"})
+    %{checklist: checklist}
+  end
+
+  def item_fixture(checklist, attrs \\ %{}) do
+    attrs = Enum.into(attrs, @valid_attrs)
+
+    case Items.create_item(checklist, attrs) do
+      {:ok, item} -> item
+    end
+  end
+
   describe "items" do
-    alias Shopping.Items.Item
-
-    @valid_attrs %{got?: true, important?: true, name: "Some name"}
-    @update_attrs %{got?: false, important?: false, name: "Some updated name"}
-    @invalid_attrs %{got?: nil, important?: nil, name: nil}
-
-    setup do
-      {:ok, checklist} = Checklists.create_checklist(%{name: "some checklist"})
-      %{checklist: checklist}
-    end
-
-    def item_fixture(checklist, attrs \\ %{}) do
-      attrs = Enum.into(attrs, @valid_attrs)
-
-      case Items.create_item(checklist, attrs) do
-        {:ok, item} -> item
-      end
-    end
-
     test "item changeset requires lcase_name to be the lower case of name" do
       valid = Map.merge(@valid_attrs, %{name: "UPPER", lcase_name: "upper"})
       invalid = Map.merge(@valid_attrs, %{name: "UPPER", lcase_name: "Upper"})
@@ -77,6 +75,100 @@ defmodule Shopping.ItemsTest do
     test "change_item/1 returns a item changeset", %{checklist: checklist} do
       item = item_fixture(checklist)
       assert %Ecto.Changeset{} = Items.change_item(item)
+    end
+  end
+
+  describe "listing items" do
+    setup %{checklist: checklist} do
+      {:ok, other_checklist} = Checklists.create_checklist(%{name: "some checklist"})
+
+      for i <- 1..9 do
+        important? = i < 7
+        got? = i < 5
+
+        Items.create_item(checklist, %{name: "Item #{10 - i}", important?: important?, got?: got?})
+
+        Items.create_item(other_checklist, %{
+          name: "Other item #{i}",
+          important?: important?,
+          got?: got?
+        })
+      end
+
+      %{other_checklist: other_checklist}
+    end
+
+    test "listing checklist items", %{checklist: checklist} do
+      items = Items.list_items(checklist)
+      assert length(items) == 9
+
+      assert ["Item 1", "Item 2" | _] = Enum.map(items, & &1.name)
+    end
+
+    test "listing by got", %{checklist: checklist} do
+      items = Items.list_by_got(checklist)
+
+      assert length(items.got) == 4
+      assert length(items.to_get) == 5
+
+      assert [true] = items.got |> Enum.map(& &1.got?) |> Enum.uniq()
+      assert [false] = items.to_get |> Enum.map(& &1.got?) |> Enum.uniq()
+    end
+
+    test "items still to get ordered by importance, then name", %{checklist: checklist} do
+      items = Items.list_by_got(checklist)
+
+      assert [true, true, false, false, false] ==
+               Enum.map(items.to_get, & &1.important?)
+
+      assert ["Item 4", "Item 5", "Item 1", "Item 2", "Item 3"] ==
+               Enum.map(items.to_get, & &1.name)
+    end
+  end
+
+  describe "change importance" do
+    test "important to unimportant", %{checklist: checklist} do
+      Items.subscribe()
+      item = item_fixture(checklist, %{important?: true})
+      assert {:ok, changed} = Items.change_importance_to(item, false)
+      assert changed == Items.get_item!(item.id)
+      refute changed.important?
+      assert_receive {"item-change-importance", ^changed}
+    end
+
+    test "unimportant to important", %{checklist: checklist} do
+      Items.subscribe()
+      item = item_fixture(checklist, %{important?: false})
+      assert {:ok, changed} = Items.change_importance_to(item.id, true)
+      assert changed == Items.get_item!(item.id)
+      assert changed.important?
+      assert_receive {"item-change-importance", ^changed}
+    end
+  end
+
+  describe "update_importance_in_list_of_items" do
+    test "item is in list" do
+      items = for i <- 1..10, do: %Item{important?: false, id: i, name: "Item #{i}"}
+
+      change = %Item{
+        id: 5,
+        important?: true,
+        name: "Item 5"
+      }
+
+      new_items = Items.update_importance_in_list_of_items(items, change)
+
+      assert length(new_items) == 10
+      assert [^change | _] = new_items
+    end
+
+    test "item is not in list" do
+      items = for i <- 1..10, do: %Item{important?: false, id: i, name: "Item #{i}"}
+
+      new_items =
+        Items.update_importance_in_list_of_items(items, %Item{id: 11, important?: false})
+
+      assert new_items == items
     end
   end
 end

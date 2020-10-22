@@ -3,7 +3,7 @@ defmodule ShoppingWeb.ChecklistLiveTest do
 
   import Phoenix.LiveViewTest
 
-  alias Shopping.Checklists
+  alias Shopping.{Checklists, Items}
 
   @create_attrs %{name: "some name"}
   @update_attrs %{name: "some updated name"}
@@ -14,9 +14,18 @@ defmodule ShoppingWeb.ChecklistLiveTest do
     checklist
   end
 
+  defp fixture(:items, checklist) do
+    for i <- 1..10 do
+      case Items.create_item(checklist, %{name: "Item #{i}", got?: i > 6, important?: i < 3}) do
+        {:ok, item} -> item
+      end
+    end
+  end
+
   defp create_checklist(_) do
     checklist = fixture(:checklist)
-    %{checklist: checklist}
+    items = fixture(:items, checklist)
+    %{checklist: checklist, items: items}
   end
 
   describe "Index" do
@@ -80,6 +89,21 @@ defmodule ShoppingWeb.ChecklistLiveTest do
 
       assert html =~ "Checklist updated successfully"
       assert html =~ "some updated name"
+    end
+
+    test "handles item importance change to unimportant", %{
+      conn: conn,
+      checklist: checklist,
+      items: [item | _]
+    } do
+      # Items.subscribe()
+      {:ok, live_view, _html} = live(conn, Routes.checklist_show_path(conn, :show, checklist))
+
+      assert Items.get_item!(item.id).important?
+      render_hook(live_view, "change-importance", %{id: to_string(item.id)})
+
+      refute Items.get_item!(item.id).important?
+
     end
   end
 end

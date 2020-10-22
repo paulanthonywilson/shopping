@@ -13,3 +13,20 @@ nav.navigation {
         }
     }
 }
+
+
+.item_list {
+    padding-left: 0.5em;
+    input[type="checkbox"] {
+        transform:scale(1.5, 1.5);
+    }
+
+    .name {
+        width: 80%;
+    }
+
+    tr.important {
+        background: #ffdddd;
+        font-weight: bold;
+    }
+}

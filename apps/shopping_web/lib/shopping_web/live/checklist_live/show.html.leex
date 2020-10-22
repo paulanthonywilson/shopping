@@ -9,3 +9,4 @@
     return_to: Routes.checklist_show_path(@socket, :show, @checklist) %>
 <% end %>
 
+<%= live_component @socket, ListItemsToGetComponent, id: "items_to_get", items: @to_get%>
