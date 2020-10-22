@@ -3,6 +3,7 @@ defmodule Shopping.Items do
   The Items context.
   """
 
+  import Ecto.Changeset
   import Ecto.Query, warn: false
   alias Shopping.Repo
 
@@ -49,9 +50,9 @@ defmodule Shopping.Items do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_item(attrs \\ %{}) do
-    %Item{}
-    |> Item.changeset(attrs)
+  def create_item(checklist, attrs) do
+    %Item{checklist_id: checklist.id}
+    |> item_changeset(attrs)
     |> Repo.insert()
   end
 
@@ -69,7 +70,7 @@ defmodule Shopping.Items do
   """
   def update_item(%Item{} = item, attrs) do
     item
-    |> Item.changeset(attrs)
+    |> item_changeset(attrs)
     |> Repo.update()
   end
 
@@ -99,6 +100,18 @@ defmodule Shopping.Items do
 
   """
   def change_item(%Item{} = item, attrs \\ %{}) do
+    item_changeset(item, attrs)
+  end
+
+  defp item_changeset(item, attrs) do
+    attrs = lcase_name(attrs)
     Item.changeset(item, attrs)
+  end
+
+  defp lcase_name(attrs) do
+    case Map.get(attrs, :name) do
+      nil -> attrs
+      name -> Map.put(attrs, :lcase_name, String.downcase(name))
+    end
   end
 end
