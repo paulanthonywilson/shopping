@@ -4,8 +4,6 @@ defmodule ShoppingWeb.AddItemsComponent do
   alias Shopping.Items
 
   def update(assigns, socket) do
-    IO.inspect("*******")
-    IO.inspect("*******")
     checklist = Map.fetch!(assigns, :checklist)
 
     assigns =
@@ -38,8 +36,6 @@ defmodule ShoppingWeb.AddItemsComponent do
   end
 
   def handle_event("add-item-clear", _, socket) do
-    IO.inspect("CLEAR")
-    IO.inspect(socket.assigns)
     {:noreply, assign(socket, name: "")}
   end
 

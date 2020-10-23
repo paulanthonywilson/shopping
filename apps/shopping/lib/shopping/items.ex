@@ -16,8 +16,8 @@ defmodule Shopping.Items do
   @doc """
   Subscribe to updates to items
   """
-  def subscribe do
-    Phoenix.PubSub.subscribe(pub_sub(), @topic)
+  def subscribe(%Checklist{id: checklist_id}) do
+    Phoenix.PubSub.subscribe(pub_sub(), topic(checklist_id))
   end
 
   @doc """
@@ -216,8 +216,8 @@ defmodule Shopping.Items do
 
   defp lcase_name(attrs), do: attrs
 
-  defp maybe_broadcast({:ok, item} = result, message) do
-    broadcast({message, item})
+  defp maybe_broadcast({:ok, %Item{checklist_id: checklist_id} = item} = result, message) do
+    Phoenix.PubSub.broadcast!(pub_sub(), topic(checklist_id), {message, item})
     result
   end
 
@@ -229,7 +229,5 @@ defmodule Shopping.Items do
     |> Keyword.fetch!(:pubsub_server)
   end
 
-  defp broadcast(event) do
-    Phoenix.PubSub.broadcast!(pub_sub(), @topic, event)
-  end
+  defp topic(checklist_id), do: "#{@topic}_#{checklist_id}"
 end

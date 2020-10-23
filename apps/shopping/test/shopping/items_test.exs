@@ -139,7 +139,7 @@ defmodule Shopping.ItemsTest do
 
   describe "change importance" do
     test "important to unimportant", %{checklist: checklist} do
-      Items.subscribe()
+      Items.subscribe(checklist)
       item = item_fixture(checklist, %{important?: true})
       assert {:ok, changed} = Items.change_importance_to(item, false)
       assert changed == Items.get_item!(item.id)
@@ -148,7 +148,7 @@ defmodule Shopping.ItemsTest do
     end
 
     test "unimportant to important", %{checklist: checklist} do
-      Items.subscribe()
+      Items.subscribe(checklist)
       item = item_fixture(checklist, %{important?: false})
       assert {:ok, changed} = Items.change_importance_to(item.id, true)
       assert changed == Items.get_item!(item.id)
@@ -157,9 +157,19 @@ defmodule Shopping.ItemsTest do
     end
   end
 
+  test "no cross-checklist events when subscribed to a checklist", %{checklist: checklist} do
+    {:ok, other_checklist} = Checklists.create_checklist(%{name: "other"})
+    item = item_fixture(other_checklist, %{important?: false})
+
+    Items.subscribe(checklist)
+    {:ok, changed} = Items.change_importance_to(item.id, true)
+
+    refute_receive {"item-change-importance", ^changed}
+  end
+
   describe "change got?" do
     test "not got to got", %{checklist: checklist} do
-      Items.subscribe()
+      Items.subscribe(checklist)
       item = item_fixture(checklist, %{got?: false, important?: true})
       assert {:ok, changed} = Items.change_got_to(item, true)
       assert changed == Items.get_item!(item.id)
@@ -171,7 +181,7 @@ defmodule Shopping.ItemsTest do
     end
 
     test "got to not got", %{checklist: checklist} do
-      Items.subscribe()
+      Items.subscribe(checklist)
       item = item_fixture(checklist, %{got?: true, important?: true})
 
       assert {:ok, changed} = Items.change_got_to(item.id, false)

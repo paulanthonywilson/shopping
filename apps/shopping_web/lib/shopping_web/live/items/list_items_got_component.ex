@@ -1,11 +1,6 @@
 defmodule ShoppingWeb.ListItemsGotComponent do
   use ShoppingWeb, :live_component
 
-  def preload(assigns) do
-    IO.inspect(assigns, label: :preload)
-    assigns
-  end
-
   def render(assigns) do
     ~L"""
     <table class="got item_list">

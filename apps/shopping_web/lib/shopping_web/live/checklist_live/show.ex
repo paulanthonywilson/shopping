@@ -6,13 +6,13 @@ defmodule ShoppingWeb.ChecklistLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    Items.subscribe()
     {:ok, assign(socket, add_item_name: "")}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     checklist = Checklists.get_checklist!(id)
+    Items.subscribe(checklist)
     items = Items.list_by_got(checklist)
 
     {:noreply,
@@ -32,7 +32,6 @@ defmodule ShoppingWeb.ChecklistLive.Show do
 
   def handle_event("change-got", %{"id" => id} = params, socket) do
     value = params["value"] || false
-    IO.inspect(value)
     Items.change_got_to(id, value)
     {:noreply, socket}
   end

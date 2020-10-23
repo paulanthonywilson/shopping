@@ -96,7 +96,6 @@ defmodule ShoppingWeb.ChecklistLiveTest do
       checklist: checklist,
       items: [item | _]
     } do
-      # Items.subscribe()
       {:ok, live_view, _html} = live(conn, Routes.checklist_show_path(conn, :show, checklist))
 
       assert Items.get_item!(item.id).important?
