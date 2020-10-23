@@ -1,6 +1,8 @@
 defmodule ShoppingWeb.Router do
   use ShoppingWeb, :router
 
+  import Plug.BasicAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -14,8 +16,20 @@ defmodule ShoppingWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :authorisation do
+    auth_config = fn key ->
+      :shopping_web
+      |> Application.fetch_env!(ShoppingWeb.Endpoint)
+      |> Keyword.fetch!(key)
+    end
+
+    plug :basic_auth,
+      username: auth_config.(:auth_user),
+      password: auth_config.(:auth_password)
+  end
+
   scope "/", ShoppingWeb do
-    pipe_through :browser
+    pipe_through [:browser, :authorisation]
 
     live "/checklists", ChecklistLive.Index, :index
     live "/checklists/new", ChecklistLive.Index, :new
@@ -39,11 +53,11 @@ defmodule ShoppingWeb.Router do
   # If your application does not have an admins-only section yet,
   # you can use Plug.BasicAuth to set up some basic authentication
   # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
+  if Mix.env() in [:dev, :test, :prod] do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through :browser
+      pipe_through [:browser, :authorisation]
       live_dashboard "/dashboard", metrics: ShoppingWeb.Telemetry
     end
   end
