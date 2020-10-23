@@ -8,8 +8,10 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
   def render(assigns) do
     ~L"""
     <table class="to_get item_list">
-      <caption>To get</caption>
       <thead>
+      <th>Got</th>
+      <th></th>
+      <th>Need</th>
       </thead>
       <tbody>
       <%= for item <- @items do %>

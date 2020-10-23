@@ -11,10 +11,10 @@ defmodule ShoppingWeb.ListItemsGotComponent do
   def render(assigns) do
     ~L"""
     <table class="got item_list">
-      <caption>Got</caption>
       <thead>
         <th>Got</th>
         <th>Item</th>
+        <th></th>
       </thead>
       <tbody>
       <%= for item <- @items do %>
@@ -24,6 +24,7 @@ defmodule ShoppingWeb.ListItemsGotComponent do
             phx_click: "change-got", phx_value_id: item.id) %>
         </td>
         <td class="item name"><%=item.name %></td>
+        <td class="item name"><button>Del</button></td>
          </tr>
       <% end %>
       </tbody>

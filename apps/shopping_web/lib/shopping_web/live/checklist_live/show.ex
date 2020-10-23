@@ -62,7 +62,8 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply,
      assign(socket,
        got: Items.remove_item_from_list(got, item),
-       to_get: Items.sort_in_order_of_importance([item | to_get])
+       to_get: Items.sort_in_order_of_importance([item | to_get]),
+       filter: ""
      )}
   end
 
