@@ -62,6 +62,19 @@ defmodule Shopping.ItemsTest do
       assert {:error, %Ecto.Changeset{}} = Items.create_item(checklist, @invalid_attrs)
     end
 
+    test "unique constraint on lower case name", %{checklist: checklist} do
+      item_fixture(checklist, %{name: "Bread"})
+      assert {:error, changeset} = Items.create_item(checklist, %{name: "bread"})
+      assert [{:name, {"already in the list", _}}] = changeset.errors
+    end
+
+    test "create item broadcasts creation to subscribers", %{checklist: checklist} do
+      :ok = Items.subscribe(checklist)
+      {:ok, item} = Items.create_item(checklist, @valid_attrs)
+
+      assert_receive {"item-created", ^item}
+    end
+
     test "update_item/2 with valid data updates the item", %{checklist: checklist} do
       item = item_fixture(checklist)
       assert {:ok, %Item{} = item} = Items.update_item(item, @update_attrs)
@@ -139,8 +152,8 @@ defmodule Shopping.ItemsTest do
 
   describe "change importance" do
     test "important to unimportant", %{checklist: checklist} do
-      Items.subscribe(checklist)
       item = item_fixture(checklist, %{important?: true})
+      Items.subscribe(checklist)
       assert {:ok, changed} = Items.change_importance_to(item, false)
       assert changed == Items.get_item!(item.id)
       refute changed.important?
@@ -148,8 +161,8 @@ defmodule Shopping.ItemsTest do
     end
 
     test "unimportant to important", %{checklist: checklist} do
-      Items.subscribe(checklist)
       item = item_fixture(checklist, %{important?: false})
+      Items.subscribe(checklist)
       assert {:ok, changed} = Items.change_importance_to(item.id, true)
       assert changed == Items.get_item!(item.id)
       assert changed.important?
@@ -169,8 +182,9 @@ defmodule Shopping.ItemsTest do
 
   describe "change got?" do
     test "not got to got", %{checklist: checklist} do
-      Items.subscribe(checklist)
       item = item_fixture(checklist, %{got?: false, important?: true})
+
+      Items.subscribe(checklist)
       assert {:ok, changed} = Items.change_got_to(item, true)
       assert changed == Items.get_item!(item.id)
 
@@ -181,9 +195,9 @@ defmodule Shopping.ItemsTest do
     end
 
     test "got to not got", %{checklist: checklist} do
-      Items.subscribe(checklist)
       item = item_fixture(checklist, %{got?: true, important?: true})
 
+      Items.subscribe(checklist)
       assert {:ok, changed} = Items.change_got_to(item.id, false)
       assert changed == Items.get_item!(item.id)
 

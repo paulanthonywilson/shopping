@@ -13,7 +13,6 @@ defmodule Shopping.Repo.Migrations.CreateItems do
     end
 
     create index(:items, [:checklist_id])
-    create index(:items, [:lcase_name])
-    create index(:items, [:checklist_id, :name], unique: true)
+    create index(:items, [:checklist_id, :lcase_name], unique: true)
   end
 end

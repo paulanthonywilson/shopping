@@ -20,6 +20,10 @@ defmodule Shopping.Items.Item do
     |> cast(attrs, [:name, :lcase_name, :got?, :important?])
     |> validate_required([:name, :lcase_name, :got?, :important?])
     |> validate_lcase_name()
+    |> unique_constraint(:name,
+      name: :items_checklist_id_lcase_name_index,
+      message: "already in the list"
+    )
   end
 
   defp validate_lcase_name(changeset) do

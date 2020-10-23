@@ -49,6 +49,7 @@ defmodule Shopping.Items do
     %Item{checklist_id: checklist.id}
     |> item_changeset(attrs)
     |> Repo.insert()
+    |> maybe_broadcast("item-created")
   end
 
   def create_changeset(checklist) do

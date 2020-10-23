@@ -66,6 +66,17 @@ defmodule ShoppingWeb.ChecklistLive.Show do
      )}
   end
 
+  def handle_info({"item-created", %{got?: true} = item}, socket) do
+    %{got: got} = socket.assigns
+
+    {:noreply, assign(socket, got: [item | got])}
+  end
+
+  def handle_info({"item-created", %{got?: false} = item}, socket) do
+    %{to_get: to_get} = socket.assigns
+    {:noreply, assign(socket, to_get: Items.sort_in_order_of_importance([item | to_get]))}
+  end
+
   def handle_info(_, socket) do
     {:noreply, socket}
   end

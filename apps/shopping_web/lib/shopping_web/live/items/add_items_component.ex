@@ -49,10 +49,9 @@ defmodule ShoppingWeb.AddItemsComponent do
     socket =
       case Items.create_item(checklist, item) do
         {:ok, _item} ->
-          assign(socket, changeset: Items.create_changeset(checklist))
+          assign(socket, changeset: Items.create_changeset(checklist), name: "")
 
         {:error, changeset} ->
-          IO.inspect(changeset.errors)
           assign(socket, changeset: changeset)
       end
 
