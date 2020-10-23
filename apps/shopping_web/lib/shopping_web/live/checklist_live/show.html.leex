@@ -12,6 +12,6 @@
 <%= live_component @socket, ListItemsToGetComponent, id: "items_to_get", items: @to_get%>
 <hr/>
 
-<%= live_component @socket, AddItemsComponent, id: "add_items", checklist: @checklist, name: @add_item_name %>
+<%= live_component @socket, AddItemsComponent, id: "add_items", checklist: @checklist, name: "" %>
 <hr/>
-<%= live_component @socket, ListItemsGotComponent, id: "items_to_got", items: @got%>
+<%= live_component @socket, ListItemsGotComponent, id: "items_to_got", items: @got, filter: @filter%>

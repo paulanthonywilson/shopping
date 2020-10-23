@@ -1,6 +1,13 @@
 defmodule ShoppingWeb.ListItemsGotComponent do
   use ShoppingWeb, :live_component
 
+  alias ShoppingWeb.FilteredItemList
+
+  def update(%{filter: filter, items: items}, socket) do
+    filtered_items = FilteredItemList.filter(items, filter)
+    {:ok, assign(socket, items: filtered_items)}
+  end
+
   def render(assigns) do
     ~L"""
     <table class="got item_list">

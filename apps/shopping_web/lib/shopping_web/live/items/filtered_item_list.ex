@@ -2,20 +2,18 @@ defmodule ShoppingWeb.FilteredItemList do
   @moduledoc """
   Applies the filter to the original list of items.
 
-  The fliter algorithm is ...
+  The fliter algorithm is simply whether the (lower case) filter is present
+  in the item's `lcase_name`
   """
 
   alias Shopping.Items.Item
 
-  @enforce_keys [:items, :filtered]
-  defstruct [:items, :filtered, filter: ""]
-  @type t :: %__MODULE__{items: list(Item.t()), filtered: list(Item.t()), filter: String.t()}
-
-  @spec new(list(Item.t())) :: ShoppingWeb.FilteredItemList.t()
-  def new(items) do
-    %__MODULE__{
-      items: items,
-      filtered: items
-    }
+  @doc """
+  Filter the list
+  """
+  @spec filter(list(Item.t()), Strint.t()) :: list(Item.t())
+  def filter(item_list, filter) do
+    filter = String.downcase(filter)
+    Enum.filter(item_list, fn %Item{lcase_name: lname} -> lname =~ filter end)
   end
 end

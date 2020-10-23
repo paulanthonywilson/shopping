@@ -24,7 +24,7 @@ defmodule ShoppingWeb.AddItemsComponent do
        <%= text_input f, :name,
                 placeholder: "Name",
                 autocomplete: "off",
-                phx_debounce: "100",
+                phx_debounce: "300",
                 value: @name %>
        <%= error_tag f, :name %>
        </div>
@@ -36,11 +36,11 @@ defmodule ShoppingWeb.AddItemsComponent do
   end
 
   def handle_event("add-item-clear", _, socket) do
-    {:noreply, assign(socket, name: "")}
+    {:noreply, name_field_change(socket, "")}
   end
 
   def handle_event("text-change", %{"item" => %{"name" => name}}, socket) do
-    {:noreply, assign(socket, name: name)}
+    {:noreply, name_field_change(socket, name)}
   end
 
   def handle_event("insert", %{"item" => item}, socket) do
@@ -49,12 +49,19 @@ defmodule ShoppingWeb.AddItemsComponent do
     socket =
       case Items.create_item(checklist, item) do
         {:ok, _item} ->
-          assign(socket, changeset: Items.create_changeset(checklist), name: "")
+          socket
+          |> assign(socket, changeset: Items.create_changeset(checklist))
+          |> name_field_change("")
 
         {:error, changeset} ->
           assign(socket, changeset: changeset)
       end
 
     {:noreply, socket}
+  end
+
+  defp name_field_change(socket, value) do
+    send(self(), {:filter_text, value})
+    assign(socket, name: value)
   end
 end

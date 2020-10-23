@@ -6,7 +6,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, add_item_name: "")}
+    {:ok, assign(socket, filter: "")}
   end
 
   @impl true
@@ -75,6 +75,11 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   def handle_info({"item-created", %{got?: false} = item}, socket) do
     %{to_get: to_get} = socket.assigns
     {:noreply, assign(socket, to_get: Items.sort_in_order_of_importance([item | to_get]))}
+  end
+
+  def handle_info({:filter_text, text}, socket) do
+    IO.inspect(text, label: :filter_text)
+    {:noreply, assign(socket, filter: text)}
   end
 
   def handle_info(_, socket) do
