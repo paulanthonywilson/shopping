@@ -51,6 +51,10 @@ defmodule Shopping.Items do
     |> Repo.insert()
   end
 
+  def create_changeset(checklist) do
+    Item.changeset(%Item{checklist_id: checklist.id}, %{})
+  end
+
   @doc """
   Updates a item.
 
@@ -202,12 +206,15 @@ defmodule Shopping.Items do
     Item.changeset(item, attrs)
   end
 
-  defp lcase_name(attrs) do
-    case Map.get(attrs, :name) do
-      nil -> attrs
-      name -> Map.put(attrs, :lcase_name, String.downcase(name))
-    end
+  defp lcase_name(%{name: name} = attrs) when not is_nil(name) do
+    Map.put(attrs, :lcase_name, String.downcase(name))
   end
+
+  defp lcase_name(%{"name" => name} = attrs) when not is_nil(name) do
+    Map.put(attrs, "lcase_name", String.downcase(name))
+  end
+
+  defp lcase_name(attrs), do: attrs
 
   defp maybe_broadcast({:ok, item} = result, message) do
     broadcast({message, item})

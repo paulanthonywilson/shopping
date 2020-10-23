@@ -47,6 +47,17 @@ defmodule Shopping.ItemsTest do
       assert item.lcase_name == "some name"
     end
 
+    test "create item with string keyed attributes", %{checklist: checklist} do
+      attrs =
+        @valid_attrs
+        |> Enum.map(fn {k, v} -> {to_string(k), v} end)
+        |> Enum.into(%{})
+
+      assert {:ok, item} = Items.create_item(checklist, attrs)
+      assert item.name == "Some name"
+      assert item.lcase_name == "some name"
+    end
+
     test "create_item/1 with invalid data returns error changeset", %{checklist: checklist} do
       assert {:error, %Ecto.Changeset{}} = Items.create_item(checklist, @invalid_attrs)
     end

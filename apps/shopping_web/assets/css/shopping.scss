@@ -19,6 +19,11 @@ h1 {
     text-align: center;
 }
 
+h2 {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
 
 .item_list {
     caption {
@@ -46,4 +51,20 @@ h1 {
 .item_list.got {
     background-color: bisque;
     padding: 1em auto;
+}
+
+.add-item-form {
+    button, .field.add-item {
+        float: left;
+    }
+
+    .field.add-item {
+        width: 50%;
+        margin: 0 1rem; 
+    }
+
+    button.clear {
+        width: 2rem;
+        padding: 0;
+    }
 }
