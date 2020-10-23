@@ -29,7 +29,10 @@ defmodule ShoppingWeb.Router do
   end
 
   scope "/", ShoppingWeb do
-    pipe_through [:browser, :authorisation]
+    case Mix.env() do
+      :test -> pipe_through :browser
+      _ -> pipe_through [:browser, :authorisation]
+    end
 
     live "/checklists", ChecklistLive.Index, :index
     live "/checklists/new", ChecklistLive.Index, :new
