@@ -15,7 +15,7 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
       </thead>
       <tbody>
       <%= for item <- @items do %>
-        <tr id="<%= item.id%>" class="<%= if item.important?, do: "important" %> ">
+        <tr class="<%= if item.important?, do: "important" %> ">
         <td class="item_got check">
           <%= checkbox(:get_item, :got?, value: item.got?,
             phx_click: "change-got", phx_value_id: item.id) %>

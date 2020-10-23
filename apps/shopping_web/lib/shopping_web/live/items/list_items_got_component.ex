@@ -18,13 +18,15 @@ defmodule ShoppingWeb.ListItemsGotComponent do
       </thead>
       <tbody>
       <%= for item <- @items do %>
-        <tr id="<%= item.id%>" class="<%= if item.important?, do: "important" %> ">
+        <tr class="<%= if item.important?, do: "important" %> ">
         <td class="item_got check">
           <%= checkbox(:get_item, :got?, value: item.got?,
             phx_click: "change-got", phx_value_id: item.id) %>
         </td>
         <td class="item name"><%=item.name %></td>
-        <td class="item name"><button>Del</button></td>
+        <td class="delete">
+          <%= link "Del", to: "#", phx_click: "delete", phx_value_id: item.id, data: [confirm: "Are you sure?"] %>
+        </td>
          </tr>
       <% end %>
       </tbody>

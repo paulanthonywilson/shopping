@@ -96,6 +96,22 @@ defmodule Shopping.ItemsTest do
       assert_raise Ecto.NoResultsError, fn -> Items.get_item!(item.id) end
     end
 
+    test "delete item with id", %{checklist: checklist} do
+      item = item_fixture(checklist)
+      assert {:ok, %Item{}} = Items.delete_item(item.id)
+      assert_raise Ecto.NoResultsError, fn -> Items.get_item!(item.id) end
+    end
+
+    test "deleting an item broadcasts an event", %{checklist: checklist} do
+      item = item_fixture(checklist)
+
+      :ok = Items.subscribe(checklist)
+
+      {:ok, item} = Items.delete_item(item)
+
+      assert_receive {"item-deleted", ^item}
+    end
+
     test "change_item/1 returns a item changeset", %{checklist: checklist} do
       item = item_fixture(checklist)
       assert %Ecto.Changeset{} = Items.change_item(item)

@@ -42,9 +42,13 @@ h2 {
         width: 80%;
     }
 
-    tr.important {
+    important {
         background: #ffdddd;
         font-weight: bold;
+    }
+
+    td.delete {
+        padding: 0 1rem;
     }
 }
 

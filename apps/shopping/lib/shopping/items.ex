@@ -87,7 +87,15 @@ defmodule Shopping.Items do
 
   """
   def delete_item(%Item{} = item) do
-    Repo.delete(item)
+    item
+    |> Repo.delete()
+    |> maybe_broadcast("item-deleted")
+  end
+
+  def delete_item(id) do
+    id
+    |> get_item!()
+    |> delete_item()
   end
 
   @doc """

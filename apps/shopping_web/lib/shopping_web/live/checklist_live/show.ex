@@ -36,6 +36,11 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply, socket}
   end
 
+  def handle_event("delete", %{"id" => id}, socket) do
+    Items.delete_item(id)
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_info({"item-change-importance", item}, socket) do
     to_get =
@@ -78,8 +83,17 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply, assign(socket, to_get: Items.sort_in_order_of_importance([item | to_get]))}
   end
 
+  def handle_info({"item-deleted", item}, socket) do
+    %{got: got, to_get: to_get} = socket.assigns
+
+    {:noreply,
+     assign(socket,
+       got: Items.remove_item_from_list(got, item),
+       to_get: Items.remove_item_from_list(to_get, item)
+     )}
+  end
+
   def handle_info({:filter_text, text}, socket) do
-    IO.inspect(text, label: :filter_text)
     {:noreply, assign(socket, filter: text)}
   end
 
