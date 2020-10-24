@@ -65,6 +65,10 @@ h2 {
     .field.add-item {
         width: 50%;
         margin: 0 1rem; 
+        input {
+            // Avoid zooming in on iPhone Safari
+            font-size: 16px; 
+        }
     }
 
     button.clear {
