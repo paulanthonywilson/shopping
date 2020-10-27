@@ -23,9 +23,10 @@ config :shopping_web, ShoppingWeb.Endpoint,
   secret_key_base: "nvGSFZN9Y+P/1xuvl50BlsUWb4x8nWNbcZrUrhbdlsX8i7jQAl5KsYTIDk6/FroD",
   render_errors: [view: ShoppingWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Shopping.PubSub,
-  live_view: [signing_salt: "FG5UUb51"],
-  auth_user: "bob",
-  auth_password: "password"
+  live_view: [signing_salt: "FG5UUb51"]
+
+config :shopping_web, auth_user: "bob"
+config :shopping_web, auth_password: "password"
 
 # Configures Elixir's Logger
 config :logger, :console,

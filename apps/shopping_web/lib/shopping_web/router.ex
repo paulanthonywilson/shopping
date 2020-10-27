@@ -17,21 +17,16 @@ defmodule ShoppingWeb.Router do
   end
 
   pipeline :authorisation do
-    auth_config = fn key ->
-      :shopping_web
-      |> Application.fetch_env!(ShoppingWeb.Endpoint)
-      |> Keyword.fetch!(key)
-    end
-
-    plug :basic_auth,
-      username: auth_config.(:auth_user),
-      password: auth_config.(:auth_password)
+    plug Auth.CheckAuth
   end
 
   scope "/", ShoppingWeb do
     case Mix.env() do
-      :test -> pipe_through :browser
-      _ -> pipe_through [:browser, :authorisation]
+      :test ->
+        pipe_through :browser
+
+      _ ->
+        pipe_through [:browser, :authorisation]
     end
 
     live "/checklists", ChecklistLive.Index, :index
@@ -44,24 +39,21 @@ defmodule ShoppingWeb.Router do
     get "/", RootController, :index
   end
 
+  scope "/", ShoppingWeb do
+    pipe_through :browser
+
+    get "/authorise", RootController, :authorise
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", ShoppingWeb do
   #   pipe_through :api
   # end
 
-  # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test, :prod] do
-    import Phoenix.LiveDashboard.Router
+  import Phoenix.LiveDashboard.Router
 
-    scope "/" do
-      pipe_through [:browser, :authorisation]
-      live_dashboard "/dashboard", metrics: ShoppingWeb.Telemetry
-    end
+  scope "/" do
+    pipe_through [:browser, :authorisation]
+    live_dashboard "/dashboard", metrics: ShoppingWeb.Telemetry
   end
 end
