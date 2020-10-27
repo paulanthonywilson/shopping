@@ -7,8 +7,7 @@ defmodule ShoppingWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_shopping_web_key",
-    signing_salt: "AbeAL8Sg",
-    max_age: 10
+    signing_salt: "AbeAL8Sg"
   ]
 
   socket("/socket", ShoppingWeb.UserSocket,
