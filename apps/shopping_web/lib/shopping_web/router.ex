@@ -1,8 +1,6 @@
 defmodule ShoppingWeb.Router do
   use ShoppingWeb, :router
 
-  import Plug.BasicAuth
-
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
