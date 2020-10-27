@@ -37,9 +37,8 @@ secret_key_base =
     You can generate one by calling: mix phx.gen.secret
     """
 
-config :shopping_web, ShoppingWeb.Endpoint,
-  auth_user: System.get_env("AUTH_USER"),
-  auth_password: System.get_env("AUTH_PASSWORD")
+config :shopping_web, auth_user: System.get_env("AUTH_USER")
+config :shopping_web, auth_password: System.get_env("AUTH_PASSWORD")
 
 # Do not print debug messages in production
 config :logger, level: :info
