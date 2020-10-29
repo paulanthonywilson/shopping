@@ -131,7 +131,7 @@ defmodule Shopping.Items do
   def change_got_to(%Item{} = item, value) do
     item
     |> update_item(%{important?: false, got?: value})
-    |> maybe_broadcast("item-change-got")
+    |> maybe_broadcast("item-changed-got")
   end
 
   def change_got_to(item_id, value) do
@@ -148,7 +148,7 @@ defmodule Shopping.Items do
   def change_importance_to(%Item{} = item, value) do
     item
     |> update_item(%{important?: value})
-    |> maybe_broadcast("item-change-importance")
+    |> maybe_broadcast("item-changed-importance")
   end
 
   def change_importance_to(item_id, value) do

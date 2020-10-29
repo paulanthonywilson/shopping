@@ -187,7 +187,7 @@ defmodule Shopping.ItemsTest do
       assert {:ok, changed} = Items.change_importance_to(item, false)
       assert changed == Items.get_item!(item.id)
       refute changed.important?
-      assert_receive {"item-change-importance", ^changed}
+      assert_receive {"item-changed-importance", ^changed}
     end
 
     test "unimportant to important", %{checklist: checklist} do
@@ -196,7 +196,7 @@ defmodule Shopping.ItemsTest do
       assert {:ok, changed} = Items.change_importance_to(item.id, true)
       assert changed == Items.get_item!(item.id)
       assert changed.important?
-      assert_receive {"item-change-importance", ^changed}
+      assert_receive {"item-changed-importance", ^changed}
     end
   end
 
@@ -207,7 +207,7 @@ defmodule Shopping.ItemsTest do
     Items.subscribe(checklist)
     {:ok, changed} = Items.change_importance_to(item.id, true)
 
-    refute_receive {"item-change-importance", ^changed}
+    refute_receive {"item-changed-importance", ^changed}
   end
 
   describe "change got?" do
@@ -221,7 +221,7 @@ defmodule Shopping.ItemsTest do
       assert changed.got?
       refute changed.important?
 
-      assert_receive {"item-change-got", ^changed}
+      assert_receive {"item-changed-got", ^changed}
     end
 
     test "got to not got", %{checklist: checklist} do
@@ -234,7 +234,7 @@ defmodule Shopping.ItemsTest do
       refute changed.got?
       refute changed.important?
 
-      assert_receive {"item-change-got", ^changed}
+      assert_receive {"item-changed-got", ^changed}
     end
   end
 

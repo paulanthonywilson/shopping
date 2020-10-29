@@ -42,7 +42,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   end
 
   @impl true
-  def handle_info({"item-change-importance", item}, socket) do
+  def handle_info({"item-changed-importance", item}, socket) do
     to_get =
       socket.assigns
       |> Map.get(:to_get)
@@ -51,7 +51,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply, assign(socket, to_get: to_get)}
   end
 
-  def handle_info({"item-change-got", %{got?: true} = item}, socket) do
+  def handle_info({"item-changed-got", %{got?: true} = item}, socket) do
     %{got: got, to_get: to_get} = socket.assigns
 
     {:noreply,
@@ -61,7 +61,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
      )}
   end
 
-  def handle_info({"item-change-got", %{got?: false} = item}, socket) do
+  def handle_info({"item-changed-got", %{got?: false} = item}, socket) do
     %{got: got, to_get: to_get} = socket.assigns
 
     {:noreply,

@@ -43,6 +43,7 @@ alias Shopping.{Categories, Checklists, Items}
   }
 
   {:ok, item} = Items.create_item(checklist, attrs)
+
   case cat do
     nil -> :ok
     cat -> Items.set_category(item, cat)
