@@ -6,7 +6,6 @@ defmodule Shopping.ItemsTest do
   alias Shopping.Categories.Category
 
   @valid_attrs %{got?: true, important?: true, name: "Some name"}
-  @update_attrs %{got?: false, important?: false, name: "Some updated name"}
   @invalid_attrs %{got?: nil, important?: nil, name: nil}
 
   setup do
@@ -103,21 +102,6 @@ defmodule Shopping.ItemsTest do
       assert_receive {"item-created", item}
 
       assert %Category{id: 0} = item.category
-    end
-
-    test "update_item/2 with valid data updates the item", %{checklist: checklist} do
-      item = item_fixture(checklist)
-      assert {:ok, %Item{} = item} = Items.update_item(item, @update_attrs)
-      assert item.got? == false
-      assert item.important? == false
-      assert item.name == "Some updated name"
-      assert item.lcase_name == "some updated name"
-    end
-
-    test "update_item/2 with invalid data returns error changeset", %{checklist: checklist} do
-      item = item_fixture(checklist)
-      assert {:error, %Ecto.Changeset{}} = Items.update_item(item, @invalid_attrs)
-      assert item == Items.get_item!(item.id)
     end
 
     test "delete_item/1 deletes the item", %{checklist: checklist} do

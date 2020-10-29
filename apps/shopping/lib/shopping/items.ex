@@ -68,19 +68,7 @@ defmodule Shopping.Items do
     Item.changeset(%Item{checklist_id: checklist.id}, %{})
   end
 
-  @doc """
-  Updates a item.
-
-  ## Examples
-
-      iex> update_item(item, %{field: new_value})
-      {:ok, %Item{}}
-
-      iex> update_item(item, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_item(%Item{} = item, attrs) do
+  defp update_item(%Item{} = item, attrs) do
     item
     |> item_changeset(attrs)
     |> Repo.update()
@@ -170,9 +158,7 @@ defmodule Shopping.Items do
   end
 
   def set_category(%Item{} = item, %Category{id: category_id}) do
-    item
-    |> Item.changeset(%{category_id: category_id})
-    |> Repo.update()
+    update_item(item, %{category_id: category_id})
   end
 
   @doc """
