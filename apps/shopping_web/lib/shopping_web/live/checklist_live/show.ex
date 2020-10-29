@@ -51,6 +51,21 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply, assign(socket, to_get: to_get)}
   end
 
+  def handle_info({"item-changed-category", %{got?: false} = item}, socket) do
+    to_get =
+      socket.assigns
+      |> Map.get(:to_get)
+      |> Items.update_in_list_of_items(item)
+
+    {:noreply, assign(socket, to_get: to_get)}
+  end
+
+  def handle_info({"item-changed-category", %{got?: true} = item}, socket) do
+    %{got: got} = socket.assigns
+
+    {:noreply, assign(socket, got: Items.update_in_list_of_items(got, item))}
+  end
+
   def handle_info({"item-changed-got", %{got?: true} = item}, socket) do
     %{got: got, to_get: to_get} = socket.assigns
 
