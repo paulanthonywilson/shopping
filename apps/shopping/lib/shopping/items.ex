@@ -157,8 +157,11 @@ defmodule Shopping.Items do
     |> change_importance_to(value)
   end
 
-  def set_category(%Item{} = item, %Category{id: category_id}) do
-    update_item(item, %{category_id: category_id})
+  def set_category(%Item{} = item, %Category{} = category) do
+    with {:ok, item} <- update_item(item, %{category_id: category.id}) do
+      {:ok, %{item | category: category}}
+    end
+    |> maybe_broadcast("item-changed-category")
   end
 
   @doc """

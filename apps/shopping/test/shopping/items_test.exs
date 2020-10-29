@@ -319,15 +319,26 @@ defmodule Shopping.ItemsTest do
   end
 
   describe "set item category" do
-    test "sets item", %{checklist: checklist} do
-      {:ok, cat} =
+    setup %{checklist: checklist} do
+      {:ok, category} =
         Categories.create_category(%{ordering: 90, category_name: "Drinks", emoji: "🍹"})
 
       item = item_fixture(checklist, %{name: "Piña colada"})
+      :ok = Items.subscribe(checklist)
+      {:ok, category: category, item: item}
+    end
 
-      assert {:ok, _item} = Items.set_category(item, cat)
+    test "sets item", %{category: category, item: item} do
+      assert {:ok, _item} = Items.set_category(item, category)
 
       assert %{category_name: "Drinks"} = Items.get_item!(item.id).category
+    end
+
+    test "broadcasts category change", %{item: item, category: category} do
+      assert {:ok, _item} = Items.set_category(item, category)
+
+      assert_receive {"item-changed-category",
+                      %Item{name: "Piña colada", category: %Category{emoji: "🍹"}}}
     end
   end
 end
