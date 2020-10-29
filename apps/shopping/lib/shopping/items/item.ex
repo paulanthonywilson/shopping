@@ -2,6 +2,8 @@ defmodule Shopping.Items.Item do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Shopping.Categories.Category
+
   @type t :: %__MODULE__{}
 
   schema "items" do
@@ -10,6 +12,7 @@ defmodule Shopping.Items.Item do
     field :name, :string
     field :lcase_name, :string
     field :checklist_id, :id
+    belongs_to :category, Category
 
     timestamps()
   end

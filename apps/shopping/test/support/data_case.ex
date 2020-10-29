@@ -27,6 +27,8 @@ defmodule Shopping.DataCase do
     end
   end
 
+  alias Shopping.Repo
+
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Shopping.Repo)
 
@@ -35,6 +37,10 @@ defmodule Shopping.DataCase do
     end
 
     :ok
+  end
+
+  def reload(%{__struct__: schema, id: id}) do
+    Repo.get!(schema, id)
   end
 
   @doc """

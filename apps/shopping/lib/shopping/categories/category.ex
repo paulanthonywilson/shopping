@@ -1,6 +1,8 @@
-defmodule Shopping.Items.Category do
+defmodule Shopping.Categories.Category do
   use Ecto.Schema
   import Ecto.Changeset
+
+  @type t :: %__MODULE__{}
 
   schema "categories" do
     field :category_name, :string

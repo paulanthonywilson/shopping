@@ -67,7 +67,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply,
      assign(socket,
        got: Items.remove_item_from_list(got, item),
-       to_get: Items.sort_in_order_of_importance([item | to_get]),
+       to_get: Items.sort_for_display([item | to_get]),
        filter: ""
      )}
   end
@@ -80,7 +80,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
 
   def handle_info({"item-created", %{got?: false} = item}, socket) do
     %{to_get: to_get} = socket.assigns
-    {:noreply, assign(socket, to_get: Items.sort_in_order_of_importance([item | to_get]))}
+    {:noreply, assign(socket, to_get: Items.sort_for_display([item | to_get]))}
   end
 
   def handle_info({"item-deleted", item}, socket) do

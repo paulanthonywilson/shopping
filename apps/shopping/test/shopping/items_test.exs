@@ -1,8 +1,9 @@
 defmodule Shopping.ItemsTest do
   use Shopping.DataCase
 
-  alias Shopping.{Items, Checklists}
-  alias Items.Item
+  alias Shopping.{Items, Categories, Checklists}
+  alias Shopping.Items.Item
+  alias Shopping.Categories.Category
 
   @valid_attrs %{got?: true, important?: true, name: "Some name"}
   @update_attrs %{got?: false, important?: false, name: "Some updated name"}
@@ -29,14 +30,30 @@ defmodule Shopping.ItemsTest do
       assert %{valid?: false} = Item.changeset(%Item{}, invalid)
     end
 
-    test "list_items/0 returns all items", %{checklist: checklist} do
+    test "list_items/1 returns all items", %{checklist: checklist} do
       item = item_fixture(checklist)
-      assert Items.list_items() == [item]
+      assert Items.list_items() == [reload(item)]
     end
 
-    test "get_item!/1 returns the item with given id", %{checklist: checklist} do
+    test "list_items/1 preloads the item category", %{checklist: checklist} do
+      item_fixture(checklist)
+
+      [item] = Items.list_items(checklist)
+
+      assert %Category{id: 0} = item.category
+    end
+
+    test "get_item!/1 returns the item with given id and preloaded category", %{
+      checklist: checklist
+    } do
       item = item_fixture(checklist)
       assert Items.get_item!(item.id) == item
+    end
+
+    test "get_item!/1 preloads category", %{checklist: checklist} do
+      %{id: id} = item_fixture(checklist)
+      item = Items.get_item!(id)
+      assert %Category{id: 0} = item.category
     end
 
     test "create_item/1 with valid data creates a item", %{checklist: checklist} do
@@ -73,6 +90,19 @@ defmodule Shopping.ItemsTest do
       {:ok, item} = Items.create_item(checklist, @valid_attrs)
 
       assert_receive {"item-created", ^item}
+    end
+
+    test "create item preloads the default category on return and broadcast", %{
+      checklist: checklist
+    } do
+      :ok = Items.subscribe(checklist)
+      {:ok, item} = Items.create_item(checklist, @valid_attrs)
+
+      assert %Category{id: 0} = item.category
+
+      assert_receive {"item-created", item}
+
+      assert %Category{id: 0} = item.category
     end
 
     test "update_item/2 with valid data updates the item", %{checklist: checklist} do
@@ -155,7 +185,7 @@ defmodule Shopping.ItemsTest do
       assert [false] = items.to_get |> Enum.map(& &1.got?) |> Enum.uniq()
     end
 
-    test "items still to get ordered by importance, then name", %{checklist: checklist} do
+    test "items still to get ordered by category, importance, then name", %{checklist: checklist} do
       items = Items.list_by_got(checklist)
 
       assert [true, true, false, false, false] ==
@@ -226,12 +256,16 @@ defmodule Shopping.ItemsTest do
 
   describe "update in list of items" do
     test "item is in list" do
-      items = for i <- 1..10, do: %Item{important?: false, id: i, name: "Item #{i}"}
+      category = %Category{ordering: 100}
+
+      items =
+        for i <- 1..10, do: %Item{important?: false, id: i, name: "Item #{i}", category: category}
 
       change = %Item{
         id: 5,
         important?: true,
-        name: "Item 5"
+        name: "Item 5",
+        category: category
       }
 
       new_items = Items.update_in_list_of_items(items, change)
@@ -267,6 +301,36 @@ defmodule Shopping.ItemsTest do
       new_items = Items.update_in_list_of_items(items, %Item{id: 11, important?: false})
 
       assert new_items == items
+    end
+  end
+
+  describe "sorting for display" do
+    test "sorts by category ordering (desc), then by important first, then by name" do
+      {:ok, high} =
+        Categories.create_category(%{ordering: 110, category_name: "Vegetables", emoji: "🥕"})
+
+      {:ok, medium} =
+        Categories.create_category(%{ordering: 100, category_name: "Chilled", emoji: "🥶"})
+
+      {:ok, low} =
+        Categories.create_category(%{ordering: 90, category_name: "Drinks", emoji: "🍹"})
+
+      items =
+        for i <- 8..0 do
+          category =
+            case Integer.mod(i, 3) do
+              0 -> high
+              1 -> medium
+              2 -> low
+            end
+
+          %Item{category: category, important?: i > 5, name: to_string(i)}
+        end
+
+      assert ~w(6 0 3 7 1 4 8 2 5) ==
+               items
+               |> Items.sort_for_display()
+               |> Enum.map(& &1.name)
     end
   end
 end

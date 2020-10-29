@@ -33,14 +33,21 @@ defmodule Shopping.Items do
   end
 
   def list_items(checklist_id) do
-    Repo.all(from i in Item, where: i.checklist_id == ^checklist_id, order_by: i.lcase_name)
+    Repo.all(
+      from i in Item,
+        where: i.checklist_id == ^checklist_id,
+        order_by: i.lcase_name,
+        preload: :category
+    )
   end
 
   @doc """
   Gets a single item.
 
   """
-  def get_item!(id), do: Repo.get!(Item, id)
+  def get_item!(id) do
+    Repo.one!(from i in Item, where: i.id == ^id, preload: :category)
+  end
 
   @doc """
   Creates a item on the checklist.
@@ -49,8 +56,12 @@ defmodule Shopping.Items do
     %Item{checklist_id: checklist.id}
     |> item_changeset(attrs)
     |> Repo.insert()
+    |> preload_category()
     |> maybe_broadcast("item-created")
   end
+
+  defp preload_category({:ok, item}), do: {:ok, Repo.preload(item, :category)}
+  defp preload_category(err), do: err
 
   def create_changeset(checklist) do
     Item.changeset(%Item{checklist_id: checklist.id}, %{})
@@ -118,7 +129,7 @@ defmodule Shopping.Items do
       |> Enum.group_by(& &1.got?)
 
     got = items[true] || []
-    to_get = sort_in_order_of_importance(items[false] || [])
+    to_get = sort_for_display(items[false] || [])
 
     %ItemsByGot{got: got, to_get: to_get}
   end
@@ -199,20 +210,30 @@ defmodule Shopping.Items do
     {:found,
      [changed_item | acc]
      |> Enum.reverse(t)
-     |> sort_in_order_of_importance()}
+     |> sort_for_display()}
   end
 
   defp update_in_list_of_items([h | t], changed_item, acc) do
     update_in_list_of_items(t, changed_item, [h | acc])
   end
 
-  def sort_in_order_of_importance(items) do
-    Enum.sort_by(items, &{!&1.important?, &1.lcase_name})
+  def sort_for_display(items) do
+    Enum.sort_by(items, &{-item_ordering(&1), !&1.important?, &1.name})
+  end
+
+  defp item_ordering(item) do
+    item.category.ordering
   end
 
   defp item_changeset(item, attrs) do
     attrs = lcase_name(attrs)
-    Item.changeset(item, attrs)
+
+    item
+    |> Map.update!(:category_id, fn
+      nil -> 0
+      id -> id
+    end)
+    |> Item.changeset(attrs)
   end
 
   defp lcase_name(%{name: name} = attrs) when not is_nil(name) do
