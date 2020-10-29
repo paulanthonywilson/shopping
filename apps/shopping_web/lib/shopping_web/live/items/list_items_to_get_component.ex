@@ -11,6 +11,7 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
       <thead>
       <th>Got</th>
       <th></th>
+      <th></th>
       <th>Need</th>
       </thead>
       <tbody>
@@ -20,6 +21,7 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
           <%= checkbox(:get_item, :got?, value: item.got?,
             phx_click: "change-got", phx_value_id: item.id) %>
         </td>
+        <td class="category-emoji"><%= item_emoji(item) %></td>
         <td class="item name"><%=item.name %></td>
         <td class="item_important check" >
           <%= checkbox(:get_item, :important?, value: item.important?,
@@ -30,5 +32,9 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
       <% end %>
       </tbody>
     """
+  end
+
+  defp item_emoji(item) do
+    item.category.emoji
   end
 end

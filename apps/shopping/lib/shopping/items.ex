@@ -6,6 +6,7 @@ defmodule Shopping.Items do
   import Ecto.Query, warn: false
   alias Shopping.Repo
 
+  alias Shopping.Categories.Category
   alias Shopping.Checklists.Checklist
   alias Shopping.Items.{Item, ItemsByGot}
 
@@ -166,6 +167,12 @@ defmodule Shopping.Items do
     item_id
     |> get_item!()
     |> change_importance_to(value)
+  end
+
+  def set_category(%Item{} = item, %Category{id: category_id}) do
+    item
+    |> Item.changeset(%{category_id: category_id})
+    |> Repo.update()
   end
 
   @doc """

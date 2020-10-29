@@ -333,4 +333,17 @@ defmodule Shopping.ItemsTest do
                |> Enum.map(& &1.name)
     end
   end
+
+  describe "set item category" do
+    test "sets item", %{checklist: checklist} do
+      {:ok, cat} =
+        Categories.create_category(%{ordering: 90, category_name: "Drinks", emoji: "🍹"})
+
+      item = item_fixture(checklist, %{name: "Piña colada"})
+
+      assert {:ok, _item} = Items.set_category(item, cat)
+
+      assert %{category_name: "Drinks"} = Items.get_item!(item.id).category
+    end
+  end
 end

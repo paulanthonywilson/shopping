@@ -20,7 +20,7 @@ defmodule Shopping.Items.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:name, :lcase_name, :got?, :important?])
+    |> cast(attrs, [:name, :lcase_name, :got?, :important?, :category_id])
     |> validate_required([:name, :lcase_name, :got?, :important?])
     |> validate_lcase_name()
     |> unique_constraint(:name,
