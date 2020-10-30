@@ -6,8 +6,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     assign(socket, filter: "",  categories: Categories.list_all_categories())}
+    {:ok, assign(socket, filter: "", categories: Categories.list_all_categories())}
   end
 
   @impl true
@@ -59,8 +58,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply,
      socket
      |> put_flash(:info, "#{item.name} category updated to #{item.category.emoji}")
-     |> push_redirect(to: Routes.checklist_show_path(socket, :show, checklist))
-    }
+     |> push_redirect(to: Routes.checklist_show_path(socket, :show, checklist))}
   end
 
   @impl true
