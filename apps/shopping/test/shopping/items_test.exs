@@ -340,5 +340,13 @@ defmodule Shopping.ItemsTest do
       assert_receive {"item-changed-category",
                       %Item{name: "Piña colada", category: %Category{emoji: "🍹"}}}
     end
+
+    test "with category id", %{item: item, category: category} do
+      assert {:ok, _item} = Items.set_category(item, category.id)
+      assert %{category_name: "Drinks"} = Items.get_item!(item.id).category
+
+      assert_receive {"item-changed-category",
+                      %Item{name: "Piña colada", category: %Category{emoji: "🍹"}}}
+    end
   end
 end

@@ -6,6 +6,7 @@ defmodule Shopping.Items do
   import Ecto.Query, warn: false
   alias Shopping.Repo
 
+  alias Shopping.Categories
   alias Shopping.Categories.Category
   alias Shopping.Checklists.Checklist
   alias Shopping.Items.{Item, ItemsByGot}
@@ -162,6 +163,10 @@ defmodule Shopping.Items do
       {:ok, %{item | category: category}}
     end
     |> maybe_broadcast("item-changed-category")
+  end
+
+  def set_category(%Item{} = item, category_id) do
+    set_category(item, Categories.get_category!(category_id))
   end
 
   @doc """

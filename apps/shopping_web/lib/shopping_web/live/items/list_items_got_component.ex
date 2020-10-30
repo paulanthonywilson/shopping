@@ -23,7 +23,7 @@ defmodule ShoppingWeb.ListItemsGotComponent do
           <%= checkbox(:get_item, :got?, value: item.got?,
             phx_click: "change-got", phx_value_id: item.id) %>
         </td>
-        <td class="item name"><%= item.category.emoji %> <%=item.name %></td>
+        <td class="item name"><a href="#" phx-click="edit-item"><%= item.category.emoji %> <%=item.name %></a></td>
         <td class="delete">
           <%= link "Del", to: "#", phx_click: "delete", phx_value_id: item.id, data: [confirm: "Are you sure?"] %>
         </td>

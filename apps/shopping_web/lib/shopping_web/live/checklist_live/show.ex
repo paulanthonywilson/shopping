@@ -1,16 +1,27 @@
 defmodule ShoppingWeb.ChecklistLive.Show do
   use ShoppingWeb, :live_view
 
-  alias Shopping.{Checklists, Items}
+  alias Shopping.{Categories, Checklists, Items}
   alias ShoppingWeb.{AddItemsComponent, ListItemsToGetComponent, ListItemsGotComponent}
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, filter: "")}
+    {:ok,
+     assign(socket, filter: "",  categories: Categories.list_all_categories())}
   end
 
   @impl true
-  def handle_params(%{"id" => id}, _, socket) do
+
+  def handle_params(%{"item_id" => item_id} = params, _, socket) do
+    item = Items.get_item!(item_id)
+    assign_checklist_and_items(params, assign(socket, item: item))
+  end
+
+  def handle_params(params, _, socket) do
+    assign_checklist_and_items(params, socket)
+  end
+
+  defp assign_checklist_and_items(%{"id" => id}, socket) do
     checklist = Checklists.get_checklist!(id)
     Items.subscribe(checklist)
     items = Items.list_by_got(checklist)
@@ -39,6 +50,17 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   def handle_event("delete", %{"id" => id}, socket) do
     Items.delete_item(id)
     {:noreply, socket}
+  end
+
+  def handle_event("update-item-category", %{"item-category-id" => category_id}, socket) do
+    %{item: item, checklist: checklist} = socket.assigns
+    {:ok, item} = Items.set_category(item, category_id)
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "#{item.name} category updated to #{item.category.emoji}")
+     |> push_redirect(to: Routes.checklist_show_path(socket, :show, checklist))
+    }
   end
 
   @impl true
@@ -116,6 +138,6 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply, socket}
   end
 
-  defp page_title(:show, %{name: name}), do: name
   defp page_title(:edit, %{name: name}), do: "Change #{name}"
+  defp page_title(_, %{name: name}), do: name
 end

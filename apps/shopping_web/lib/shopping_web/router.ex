@@ -34,6 +34,8 @@ defmodule ShoppingWeb.Router do
     live "/checklists/:id", ChecklistLive.Show, :show
     live "/checklists/:id/show/edit", ChecklistLive.Show, :edit
 
+    live "/checklists/:id/items/:item_id/edit-catetegory", ChecklistLive.Show, :edit_item_category
+
     get "/", RootController, :index
   end
 

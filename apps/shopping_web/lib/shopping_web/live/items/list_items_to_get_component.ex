@@ -20,7 +20,7 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
           <%= checkbox(:get_item, :got?, value: item.got?,
             phx_click: "change-got", phx_value_id: item.id) %>
         </td>
-        <td class="item name"><%= item_emoji(item)%> <%=item.name %></td>
+        <td class="item name"><%= live_patch "#{item_emoji(item)} #{item.name}", [to: Routes.checklist_show_path(@socket, :edit_item_category, item.checklist_id, item)] %></td>
         <td class="item_important check" >
           <%= checkbox(:get_item, :important?, value: item.important?,
           phx_click: "change-importance",

@@ -23,4 +23,8 @@ defmodule Shopping.Categories do
   def list_all_categories() do
     Repo.all(from c in Category, order_by: [desc: c.ordering])
   end
+
+  def get_category!(category_id) do
+    Repo.get!(Category, category_id)
+  end
 end
