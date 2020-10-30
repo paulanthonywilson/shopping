@@ -1,4 +1,6 @@
 defmodule Shopping.Checklists.Checklist do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 

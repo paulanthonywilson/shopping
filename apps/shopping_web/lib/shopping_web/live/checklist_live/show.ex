@@ -1,4 +1,8 @@
 defmodule ShoppingWeb.ChecklistLive.Show do
+  @moduledoc """
+  The main page - shows the checklist with items and all the behaviour.
+  """
+
   use ShoppingWeb, :live_view
 
   alias Shopping.{Categories, Checklists, Items}

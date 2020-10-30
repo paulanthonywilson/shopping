@@ -1,4 +1,7 @@
 defmodule ShoppingWeb.ListItemsToGetComponent do
+  @moduledoc """
+  Items that we need to get
+  """
   use ShoppingWeb, :live_component
 
   import ShoppingWeb.DisplayItemComponent

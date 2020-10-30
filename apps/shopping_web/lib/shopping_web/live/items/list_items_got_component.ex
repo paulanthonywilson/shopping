@@ -1,4 +1,8 @@
 defmodule ShoppingWeb.ListItemsGotComponent do
+  @moduledoc """
+  Items that we already have
+
+  """
   use ShoppingWeb, :live_component
 
   alias ShoppingWeb.FilteredItemList

@@ -1,4 +1,8 @@
 defmodule ShoppingWeb.ChecklistLive.Index do
+  @moduledoc """
+  Lists checklists
+
+  """
   use ShoppingWeb, :live_view
 
   alias Shopping.Checklists

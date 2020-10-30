@@ -1,4 +1,7 @@
 defmodule ShoppingWeb.DisplayItemComponent do
+  @moduledoc """
+  Display item emoji and name, with a link to edit the item's category
+  """
   use ShoppingWeb, :live_component
 
   alias Shopping.Items.Item
@@ -8,7 +11,7 @@ defmodule ShoppingWeb.DisplayItemComponent do
   end
 
   @doc """
-  Display item emoji and name, with a link to edit the item's category
+  Convenience for displaying this component
   """
   @spec display_item(Phoenix.LiveView.Socket.t(), Item.t()) :: Phoenix.LiveView.Component.t()
   def display_item(socket, item) do

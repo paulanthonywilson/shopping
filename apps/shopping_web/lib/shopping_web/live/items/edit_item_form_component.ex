@@ -1,4 +1,7 @@
 defmodule ShoppingWeb.EditItemFormComponent do
+  @moduledoc """
+  Just allows the category to be changed.
+  """
   use ShoppingWeb, :live_component
 
   def render(assigns) do

@@ -1,4 +1,7 @@
 defmodule ShoppingWeb.ChecklistLive.FormComponent do
+  @moduledoc """
+  Geneerated component for adding or editing checklists (just the name really)
+  """
   use ShoppingWeb, :live_component
 
   alias Shopping.Checklists

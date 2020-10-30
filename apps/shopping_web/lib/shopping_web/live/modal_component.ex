@@ -1,4 +1,5 @@
 defmodule ShoppingWeb.ModalComponent do
+  @moduledoc false
   use ShoppingWeb, :live_component
 
   @impl true

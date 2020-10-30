@@ -1,4 +1,6 @@
 defmodule Shopping.Items.ItemsByGot do
+  @moduledoc false
+
   alias Shopping.Items.Item
 
   @enforce_keys [:got, :to_get]

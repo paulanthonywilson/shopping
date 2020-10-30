@@ -1,4 +1,8 @@
 defmodule Auth.CheckAuth do
+  @moduledoc """
+  Checks and sets a very long lived cookie so we don't have to keep logging on.
+  """
+
   @behaviour Plug
 
   alias Phoenix.Controller

@@ -1,4 +1,7 @@
 defmodule ShoppingWeb.AddItemsComponent do
+  @moduledoc """
+  Form to embed in show, adds item.
+  """
   use ShoppingWeb, :live_component
 
   alias Shopping.Items
