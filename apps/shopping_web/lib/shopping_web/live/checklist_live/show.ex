@@ -34,24 +34,28 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   end
 
   @impl true
-  def handle_event("change-importance", %{"id" => id} = params, socket) do
+  def handle_event(event, params, socket) do
+    do_handle_event(event, params, clear_flash(socket))
+  end
+
+  defp do_handle_event("change-importance", %{"id" => id} = params, socket) do
     value = params["value"] || false
     Items.change_importance_to(id, value)
     {:noreply, socket}
   end
 
-  def handle_event("change-got", %{"id" => id} = params, socket) do
+  defp do_handle_event("change-got", %{"id" => id} = params, socket) do
     value = params["value"] || false
     Items.change_got_to(id, value)
     {:noreply, socket}
   end
 
-  def handle_event("delete", %{"id" => id}, socket) do
+  defp do_handle_event("delete", %{"id" => id}, socket) do
     Items.delete_item(id)
     {:noreply, socket}
   end
 
-  def handle_event("update-item-category", %{"item-category-id" => category_id}, socket) do
+  defp do_handle_event("update-item-category", %{"item-category-id" => category_id}, socket) do
     %{item: item, checklist: checklist} = socket.assigns
     {:ok, item} = Items.set_category(item, category_id)
 
@@ -62,7 +66,11 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   end
 
   @impl true
-  def handle_info({"item-changed-importance", item}, socket) do
+  def handle_info(event, socket) do
+    do_handle_info(event, clear_flash(socket))
+  end
+
+  defp do_handle_info({"item-changed-importance", item}, socket) do
     to_get =
       socket.assigns
       |> Map.get(:to_get)
@@ -71,7 +79,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply, assign(socket, to_get: to_get)}
   end
 
-  def handle_info({"item-changed-category", %{got?: false} = item}, socket) do
+  defp do_handle_info({"item-changed-category", %{got?: false} = item}, socket) do
     to_get =
       socket.assigns
       |> Map.get(:to_get)
@@ -80,13 +88,13 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply, assign(socket, to_get: to_get)}
   end
 
-  def handle_info({"item-changed-category", %{got?: true} = item}, socket) do
+  defp do_handle_info({"item-changed-category", %{got?: true} = item}, socket) do
     %{got: got} = socket.assigns
 
     {:noreply, assign(socket, got: Items.update_in_list_of_items(got, item))}
   end
 
-  def handle_info({"item-changed-got", %{got?: true} = item}, socket) do
+  defp do_handle_info({"item-changed-got", %{got?: true} = item}, socket) do
     %{got: got, to_get: to_get} = socket.assigns
 
     {:noreply,
@@ -96,7 +104,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
      )}
   end
 
-  def handle_info({"item-changed-got", %{got?: false} = item}, socket) do
+  defp do_handle_info({"item-changed-got", %{got?: false} = item}, socket) do
     %{got: got, to_get: to_get} = socket.assigns
 
     {:noreply,
@@ -107,18 +115,18 @@ defmodule ShoppingWeb.ChecklistLive.Show do
      )}
   end
 
-  def handle_info({"item-created", %{got?: true} = item}, socket) do
+  defp do_handle_info({"item-created", %{got?: true} = item}, socket) do
     %{got: got} = socket.assigns
 
     {:noreply, assign(socket, got: [item | got])}
   end
 
-  def handle_info({"item-created", %{got?: false} = item}, socket) do
+  defp do_handle_info({"item-created", %{got?: false} = item}, socket) do
     %{to_get: to_get} = socket.assigns
     {:noreply, assign(socket, to_get: Items.sort_for_display([item | to_get]))}
   end
 
-  def handle_info({"item-deleted", item}, socket) do
+  defp do_handle_info({"item-deleted", item}, socket) do
     %{got: got, to_get: to_get} = socket.assigns
 
     {:noreply,
@@ -128,11 +136,11 @@ defmodule ShoppingWeb.ChecklistLive.Show do
      )}
   end
 
-  def handle_info({:filter_text, text}, socket) do
+  defp do_handle_info({:filter_text, text}, socket) do
     {:noreply, assign(socket, filter: text)}
   end
 
-  def handle_info(_, socket) do
+  defp do_handle_info(_, socket) do
     {:noreply, socket}
   end
 

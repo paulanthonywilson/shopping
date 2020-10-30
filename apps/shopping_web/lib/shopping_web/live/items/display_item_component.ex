@@ -1,7 +1,7 @@
 defmodule ShoppingWeb.DisplayItemComponent do
   use ShoppingWeb, :live_component
 
-  import Shopping.Items.Item
+  alias Shopping.Items.Item
 
   def render(assigns) do
     ~L"<%= content(@socket, @item) %>"

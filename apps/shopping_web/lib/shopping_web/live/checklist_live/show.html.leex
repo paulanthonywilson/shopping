@@ -13,8 +13,6 @@
   <%= live_modal @socket, ShoppingWeb.EditItemFormComponent, categories: @categories, item: @item, return_to: Routes.checklist_show_path(@socket, :show, @checklist) %>
 <% end %>
 
-<h2><%= @live_action %></h2>
-
 <%= live_component @socket, ListItemsToGetComponent, id: "items_to_get", items: @to_get%>
 <hr/>
 

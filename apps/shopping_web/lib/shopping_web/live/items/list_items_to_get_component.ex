@@ -33,8 +33,4 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
       </tbody>
     """
   end
-
-  defp item_emoji(item) do
-    item.category.emoji
-  end
 end
