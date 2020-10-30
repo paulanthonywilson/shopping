@@ -20,10 +20,11 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
       </thead>
       <tbody>
       <%= for item <- @items do %>
-        <tr class="<%= if item.important?, do: "important" %>">
+        <tr class="<%= if item.important?, do: "important" %>" id="to_get_<%= item.id %>">
         <td class="item_got check">
-          <%= checkbox(:get_item, :got?, value: item.got?,
-            phx_click: "change-got", phx_value_id: item.id) %>
+          <%= checkbox(:get_item, :got?, value: item.got?, phx_click: "change-got", phx_value_id: item.id) %>
+          <% # When an added item is at the end of the list the checkbox is not returned across the socket, without this hidden field. %>
+          <%= hidden_input(:get_item, :got?, value: "") %>
         </td>
         <td class="item name"><%= display_item(@socket, item) %> </td>
         <td class="item_important check" >
