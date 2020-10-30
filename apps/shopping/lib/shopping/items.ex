@@ -118,7 +118,7 @@ defmodule Shopping.Items do
       |> list_items()
       |> Enum.group_by(& &1.got?)
 
-    got = items[true] || []
+    got = sort_for_display(items[true] || [])
     to_get = sort_for_display(items[false] || [])
 
     %ItemsByGot{got: got, to_get: to_get}

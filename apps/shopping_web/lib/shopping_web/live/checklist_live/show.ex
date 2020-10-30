@@ -103,7 +103,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
 
     {:noreply,
      assign(socket,
-       got: [item | got],
+       got: Items.sort_for_display([item | got]),
        to_get: Items.remove_item_from_list(to_get, item)
      )}
   end
