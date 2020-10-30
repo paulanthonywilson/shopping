@@ -6,8 +6,6 @@ defmodule ShoppingWeb.EditItemFormComponent do
 
   def render(assigns) do
     ~L"""
-
-    <%= @return_to %>
     <form phx-change="update-item-category">
     <label for="item-category-id">Category for <%= @item.name %></label>
     <select name="item-category-id">
