@@ -103,7 +103,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
 
     {:noreply,
      assign(socket,
-       got: Items.sort_for_display([item | got]),
+       got: Items.add_to_list(got, item),
        to_get: Items.remove_item_from_list(to_get, item)
      )}
   end
@@ -114,7 +114,7 @@ defmodule ShoppingWeb.ChecklistLive.Show do
     {:noreply,
      assign(socket,
        got: Items.remove_item_from_list(got, item),
-       to_get: Items.sort_for_display([item | to_get]),
+       to_get: Items.add_to_list(to_get, item),
        filter: ""
      )}
   end
@@ -122,12 +122,12 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   defp do_handle_info({"item-created", %{got?: true} = item}, socket) do
     %{got: got} = socket.assigns
 
-    {:noreply, assign(socket, got: [item | got])}
+    {:noreply, assign(socket, got: Items.add_to_list(got, item))}
   end
 
   defp do_handle_info({"item-created", %{got?: false} = item}, socket) do
     %{to_get: to_get} = socket.assigns
-    {:noreply, assign(socket, to_get: Items.sort_for_display([item | to_get]))}
+    {:noreply, assign(socket, to_get: Items.add_to_list(to_get, item))}
   end
 
   defp do_handle_info({"item-deleted", item}, socket) do

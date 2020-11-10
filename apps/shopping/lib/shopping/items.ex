@@ -192,6 +192,12 @@ defmodule Shopping.Items do
     remove_item_from_list(tail, remove_me, [h | acc])
   end
 
+  def add_to_list(item_list, item) do
+    [item | item_list]
+    |> Enum.uniq_by(& &1.id)
+    |> sort_for_display()
+  end
+
   @doc """
   Replace the item matching the id in the list of items
   """

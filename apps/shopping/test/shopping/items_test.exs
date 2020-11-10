@@ -288,6 +288,44 @@ defmodule Shopping.ItemsTest do
     end
   end
 
+  describe "add to list of items" do
+    setup do
+      category = %Category{ordering: 100}
+
+      items =
+        for i <- 1..5, do: %Item{important?: false, id: i, name: "Item #{i}", category: category}
+
+      {:ok, items: items, category: category}
+    end
+
+    test "item added to list in display order", %{items: items, category: category} do
+      new_items =
+        Items.add_to_list(items, %Item{
+          important?: false,
+          id: 30,
+          name: "Item 30",
+          category: category
+        })
+
+      assert [1, 2, 3, 30, 4, 5] == Enum.map(new_items, & &1.id)
+    end
+
+    test "item added to list that already exists (by id) is ignored", %{
+      items: items,
+      category: category
+    } do
+      new_items =
+        Items.add_to_list(items, %Item{
+          important?: false,
+          id: 3,
+          name: "Item 30",
+          category: category
+        })
+
+      assert [1, 2, 3, 4, 5] == Enum.map(new_items, & &1.id)
+    end
+  end
+
   describe "sorting for display" do
     test "sorts by category ordering (desc), then by important first, then by name" do
       {:ok, high} =
