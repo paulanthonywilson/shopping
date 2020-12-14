@@ -9,3 +9,15 @@
 
   <%= @inner_content %>
 </main>
+<hr/>
+<footer>
+  <section class="container">
+    <nav role="navigation" class="navigation">
+      <ul>
+          <li><%= link "Lists", to: Routes.checklist_index_path(@socket, :index) %></li>
+          <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@socket, :home) %></li>
+      </ul>
+    </nav>
+  </section>
+</footer>
+<script data-goatcounter="https://merecomp.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
