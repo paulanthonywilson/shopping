@@ -30,5 +30,15 @@ defmodule ShoppingWeb.FilteredItemListTest do
                "ethalfred"
              ]
     end
+
+    test "with untrimmed space" do
+      items = for name <- ["alfred", "mavis", "alfonso", "ethalfred"], do: %Item{lcase_name: name}
+
+      assert FilteredItemList.filter(items, " Alf ") |> Enum.map(& &1.lcase_name) == [
+               "alfred",
+               "alfonso",
+               "ethalfred"
+             ]
+    end
   end
 end

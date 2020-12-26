@@ -13,7 +13,11 @@ defmodule ShoppingWeb.FilteredItemList do
   """
   @spec filter(list(Item.t()), Strint.t()) :: list(Item.t())
   def filter(item_list, filter) do
-    filter = String.downcase(filter)
+    filter =
+      filter
+      |> String.trim()
+      |> String.downcase()
+
     Enum.filter(item_list, fn %Item{lcase_name: lname} -> lname =~ filter end)
   end
 end
