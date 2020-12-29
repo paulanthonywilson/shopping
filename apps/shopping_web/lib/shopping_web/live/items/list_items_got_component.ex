@@ -30,9 +30,6 @@ defmodule ShoppingWeb.ListItemsGotComponent do
             phx_click: "change-got", phx_value_id: item.id) %>
         </td>
         <td class="item name"><%= display_item(@socket, item) %> </td>
-        <td class="delete">
-          <%= link "Del", to: "#", phx_click: "delete", phx_value_id: item.id, data: [confirm: "Are you sure?"] %>
-        </td>
          </tr>
       <% end %>
       </tbody>

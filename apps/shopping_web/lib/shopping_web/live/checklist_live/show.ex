@@ -55,8 +55,9 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   end
 
   defp do_handle_event("delete", %{"id" => id}, socket) do
+    %{checklist: checklist} = socket.assigns
     Items.delete_item(id)
-    {:noreply, socket}
+    {:noreply, push_redirect(socket, to: Routes.checklist_show_path(socket, :show, checklist))}
   end
 
   defp do_handle_event("update-item-category", %{"item-category-id" => category_id}, socket) do
