@@ -8,6 +8,8 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   alias Shopping.{Categories, Checklists, Items}
   alias ShoppingWeb.{AddItemsComponent, ListItemsToGetComponent, ListItemsGotComponent}
 
+  @five_minutes 5 * 60 * 1_000
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok, assign(socket, filter: "", categories: Categories.list_all_categories())}
@@ -17,24 +19,30 @@ defmodule ShoppingWeb.ChecklistLive.Show do
 
   def handle_params(%{"item_id" => item_id} = params, _, socket) do
     item = Items.get_item!(item_id)
-    assign_checklist_and_items(params, assign(socket, item: item))
+    assign_checklist(params, assign(socket, item: item))
   end
 
   def handle_params(params, _, socket) do
-    assign_checklist_and_items(params, socket)
+    assign_checklist(params, socket)
   end
 
-  defp assign_checklist_and_items(%{"id" => id}, socket) do
+  defp assign_checklist(%{"id" => id}, socket) do
+    send(self(), :assign_items)
     checklist = Checklists.get_checklist!(id)
     Items.subscribe(checklist)
-    items = Items.list_by_got(checklist)
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, checklist))
      |> assign(:checklist, checklist)
-     |> assign(got: items.got)
-     |> assign(to_get: items.to_get)}
+     |> assign(:to_get, [])
+     |> assign(:got, [])}
+  end
+
+  defp assign_all_items(socket) do
+    %{checklist: checklist} = socket.assigns
+    items = Items.list_by_got(checklist)
+    assign(socket, got: items.got, to_get: items.to_get)
   end
 
   @impl true
@@ -49,7 +57,12 @@ defmodule ShoppingWeb.ChecklistLive.Show do
   end
 
   defp do_handle_event("change-got", %{"id" => id} = params, socket) do
-    value = params["value"] || false
+    value =
+      case params["value"] do
+        "true" -> true
+        _ -> false
+      end
+
     Items.change_got_to(id, value)
     {:noreply, socket}
   end
@@ -68,6 +81,13 @@ defmodule ShoppingWeb.ChecklistLive.Show do
      socket
      |> put_flash(:info, "#{item.name} category updated to #{item.category.emoji}")
      |> push_redirect(to: Routes.checklist_show_path(socket, :show, checklist))}
+  end
+
+  def handle_info(:assign_items, socket) do
+    Process.send_after(self(), :assign_items, @five_minutes)
+    %{checklist: checklist} = socket.assigns
+    items = Items.list_by_got(checklist)
+    {:noreply, assign(socket, got: items.got, to_get: items.to_get)}
   end
 
   @impl true

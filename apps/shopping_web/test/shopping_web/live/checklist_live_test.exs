@@ -64,9 +64,10 @@ defmodule ShoppingWeb.ChecklistLiveTest do
     setup [:create_checklist]
 
     test "displays checklist", %{conn: conn, checklist: checklist} do
-      {:ok, _show_live, html} = live(conn, Routes.checklist_show_path(conn, :show, checklist))
+      {:ok, show_live, html} = live(conn, Routes.checklist_show_path(conn, :show, checklist))
 
       assert html =~ checklist.name
+      wait_for_items(show_live)
     end
 
     test "updates checklist within modal", %{conn: conn, checklist: checklist} do
@@ -81,7 +82,7 @@ defmodule ShoppingWeb.ChecklistLiveTest do
              |> form("#checklist-form", checklist: @invalid_attrs)
              |> render_change() =~ "can&apos;t be blank"
 
-      {:ok, _, html} =
+      {:ok, new_live, html} =
         show_live
         |> form("#checklist-form", checklist: @update_attrs)
         |> render_submit()
@@ -89,6 +90,7 @@ defmodule ShoppingWeb.ChecklistLiveTest do
 
       assert html =~ "Checklist updated successfully"
       assert html =~ "some updated name"
+      wait_for_items(new_live)
     end
 
     test "handles item importance change to unimportant", %{
@@ -102,6 +104,11 @@ defmodule ShoppingWeb.ChecklistLiveTest do
       render_hook(live_view, "change-importance", %{id: to_string(item.id)})
 
       refute Items.get_item!(item.id).important?
+      wait_for_items(live_view)
+    end
+
+    defp wait_for_items(%{pid: pid}) do
+      :sys.get_status(pid)
     end
   end
 end

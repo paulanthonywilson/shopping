@@ -8,6 +8,7 @@ defmodule ShoppingWeb.ListItemsGotComponent do
   alias ShoppingWeb.FilteredItemList
 
   import ShoppingWeb.DisplayItemComponent
+  import ShoppingWeb.ItemGotAge
 
   def update(%{filter: filter, items: items}, socket) do
     filtered_items = FilteredItemList.filter(items, filter)
@@ -20,7 +21,7 @@ defmodule ShoppingWeb.ListItemsGotComponent do
       <thead>
         <th>Got</th>
         <th>Item</th>
-        <th></th>
+        <th>Last got</th>
       </thead>
       <tbody>
       <%= for item <- @items do %>
@@ -30,6 +31,7 @@ defmodule ShoppingWeb.ListItemsGotComponent do
             phx_click: "change-got", phx_value_id: item.id) %>
         </td>
         <td class="item name"><%= display_item(@socket, item) %> </td>
+        <td class="item last-got"><%= got_age(item) %></td>
          </tr>
       <% end %>
       </tbody>
