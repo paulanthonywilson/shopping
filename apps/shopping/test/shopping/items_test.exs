@@ -219,6 +219,7 @@ defmodule Shopping.ItemsTest do
       assert changed == Items.get_item!(item.id)
 
       assert changed.got?
+      assert changed.last_got
       refute changed.important?
 
       assert_receive {"item-changed-got", ^changed}
@@ -232,6 +233,7 @@ defmodule Shopping.ItemsTest do
       assert changed == Items.get_item!(item.id)
 
       refute changed.got?
+      refute changed.last_got
       refute changed.important?
 
       assert_receive {"item-changed-got", ^changed}

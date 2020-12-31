@@ -131,7 +131,7 @@ defmodule Shopping.Items do
   @spec change_got_to(Item.t() | id(), boolean) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def change_got_to(%Item{} = item, value) do
     item
-    |> update_item(%{important?: false, got?: value})
+    |> update_item(change_got_attrs(value))
     |> maybe_broadcast("item-changed-got")
   end
 
@@ -139,6 +139,14 @@ defmodule Shopping.Items do
     item_id
     |> get_item!()
     |> change_got_to(value)
+  end
+
+  defp change_got_attrs(true) do
+    %{important?: false, got?: true, last_got: DateTime.utc_now()}
+  end
+
+  defp change_got_attrs(false) do
+    %{important?: false, got?: false}
   end
 
   @doc """

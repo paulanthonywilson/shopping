@@ -14,6 +14,7 @@ defmodule Shopping.Items.Item do
     field :name, :string
     field :lcase_name, :string
     field :checklist_id, :id
+    field :last_got, :utc_datetime
     belongs_to :category, Category
 
     timestamps()
@@ -22,7 +23,7 @@ defmodule Shopping.Items.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:name, :lcase_name, :got?, :important?, :category_id])
+    |> cast(attrs, [:name, :lcase_name, :got?, :important?, :category_id, :last_got])
     |> validate_required([:name, :lcase_name, :got?, :important?])
     |> validate_lcase_name()
     |> unique_constraint(:name,
