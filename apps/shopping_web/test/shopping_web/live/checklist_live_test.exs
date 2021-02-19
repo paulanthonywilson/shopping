@@ -47,7 +47,7 @@ defmodule ShoppingWeb.ChecklistLiveTest do
 
       assert index_live
              |> form("#checklist-form", checklist: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         index_live
@@ -80,7 +80,7 @@ defmodule ShoppingWeb.ChecklistLiveTest do
 
       assert show_live
              |> form("#checklist-form", checklist: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, new_live, html} =
         show_live
