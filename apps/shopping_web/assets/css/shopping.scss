@@ -2,6 +2,17 @@ footer {
     width: 100%;
 }
 
+
+#disconnected-overlay {
+    background: rgb(20, 1, 44);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 40%;
+}
+
 nav.navigation {
     ul li {
         float: left;

@@ -9,6 +9,7 @@
     return_to: Routes.checklist_show_path(@socket, :show, @checklist) %>
 <% end %>
 
+
 <%= if @live_action == :edit_item_category do %>
   <%= live_modal @socket, ShoppingWeb.EditItemFormComponent, categories: @categories, item: @item, return_to: Routes.checklist_show_path(@socket, :show, @checklist) %>
 <% end %>
@@ -19,3 +20,4 @@
 <%= live_component @socket, AddItemsComponent, id: "add_items", checklist: @checklist, name: @filter %>
 <hr/>
 <%= live_component @socket, ListItemsGotComponent, id: "items_to_got", items: @got, filter: @filter%>
+<div id="disconnected-overlay" phx-hook="DisconnectedOverlayHook" phx-update="ignore"></div>
