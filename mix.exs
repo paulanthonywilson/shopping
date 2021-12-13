@@ -14,7 +14,7 @@ defmodule Shopping.Umbrella.MixProject do
 
   defp deps do
     [
-      {:credo, "~> 1.5"}
+      {:credo, "~> 1.6", only: [:dev, :test]}
     ]
   end
 
