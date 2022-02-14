@@ -5,7 +5,7 @@ defmodule ShoppingWeb.EditItemFormComponent do
   use ShoppingWeb, :live_component
 
   def render(assigns) do
-    ~L"""
+    ~H"""
     <form phx-change="update-item-category">
     <div class="row"> <div class="column">
     <label for="item-category-id">Category for <%= @item.name %></label>

@@ -19,7 +19,7 @@
   </thead>
   <tbody id="checklists">
     <%= for checklist <- @checklists do %>
-      <tr id="checklist-<%= checklist.id %>">
+      <tr id={"checklist-#{checklist.id}"}>
         <td><%= live_redirect checklist.name, to: Routes.checklist_show_path(@socket, :show, checklist) %></td>
       </tr>
     <% end %>

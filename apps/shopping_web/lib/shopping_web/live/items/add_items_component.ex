@@ -17,11 +17,11 @@ defmodule ShoppingWeb.AddItemsComponent do
   end
 
   def render(assigns) do
-    ~L"""
+    ~H"""
     <div class="add-item-form">
         <button class="button button-outline clear" phx-click="add-item-clear"
-               phs_disable_with="...", phx-target="<%= @myself %>"">X</button>
-       <%= f = form_for @changeset, "#", phx_submit: "insert", phx_change: "text-change", phx_target: @myself %>
+               phs_disable_with="...", phx-target={@myself}>X</button>
+       <%= form_for @changeset, "#",[ phx_submit: "insert", phx_change: "text-change", phx_target: @myself], fn f -> %>
 
        <div class="field add-item"  >
        <%= text_input f, :name,
@@ -33,7 +33,7 @@ defmodule ShoppingWeb.AddItemsComponent do
        </div>
 
        <%= submit "add", phx_disable_with: "Saving..." %>
-       </form>
+       <% end %>
     </div>
     """
   end

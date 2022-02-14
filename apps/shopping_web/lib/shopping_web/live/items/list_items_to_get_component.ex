@@ -11,7 +11,7 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
   end
 
   def render(assigns) do
-    ~L"""
+    ~H"""
     <table class="to_get item_list">
       <thead>
       <th>Got</th>
@@ -20,7 +20,7 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
       </thead>
       <tbody>
       <%= for item <- @items do %>
-        <tr class="<%= if item.important?, do: "important" %>" id="to_get_<%= item.id %>">
+        <tr class={if item.important?, do: "important"} id={"to_get_#{item.id}"}>
         <td class="item_got check">
           <%= checkbox(:get_item, :got?, value: item.got?, phx_click: "change-got", phx_value_id: item.id) %>
           <% # When an added item is at the end of the list the checkbox is not returned across the socket, without this hidden field. %>
@@ -35,6 +35,7 @@ defmodule ShoppingWeb.ListItemsToGetComponent do
          </tr>
       <% end %>
       </tbody>
+    </table>
     """
   end
 end

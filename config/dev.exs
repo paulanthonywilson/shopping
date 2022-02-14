@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # Configure your database
 config :shopping, Shopping.Repo,
@@ -21,13 +21,8 @@ config :shopping_web, ShoppingWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--watch-stdin",
-      cd: Path.expand("../apps/shopping_web/assets", __DIR__)
-    ]
+    # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
   ]
 
 # ## SSL Support

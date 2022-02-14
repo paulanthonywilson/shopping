@@ -37,18 +37,19 @@ defmodule ShoppingWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.6"},
+      {:phoenix, "~> 1.6"},
       {:phoenix_ecto, "~> 4.0"},
-      {:phoenix_live_view, "~> 0.15.3"},
+      {:phoenix_live_view, "~> 0.17.7"},
       {:floki, ">= 0.27.0", only: :test},
-      {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.3 or ~> 0.2.9"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
+      {:phoenix_html, "~> 3.2"},
+      {:phoenix_live_reload, "~> 1.3", only: :dev},
+      {:phoenix_live_dashboard, "~> 0.6.4"},
+      {:telemetry_metrics, "~> 0.5"},
+      {:telemetry_poller, "~> 0.5"},
+      {:gettext, "~> 0.19.1"},
+      {:esbuild, "~> 0.4.0"},
       {:shopping, in_umbrella: true},
-      {:jason, "~> 1.0"},
+      {:jason, "~> 1.3"},
       {:plug_cowboy, "~> 2.0"}
     ]
   end
@@ -58,7 +59,8 @@ defmodule ShoppingWeb.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "cmd npm install --prefix assets"],
+      setup: ["deps.get"],
+      "assets.deploy": ["esbuild default --minify", "phx.digest"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end

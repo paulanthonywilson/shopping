@@ -16,7 +16,7 @@ defmodule ShoppingWeb.ListItemsGotComponent do
   end
 
   def render(assigns) do
-    ~L"""
+    ~H"""
     <table class="got item_list">
       <thead>
         <th>Got</th>
@@ -25,7 +25,7 @@ defmodule ShoppingWeb.ListItemsGotComponent do
       </thead>
       <tbody>
       <%= for item <- @items do %>
-        <tr class="<%= if item.important?, do: "important" %> ">
+        <tr class={if item.important?, do: "important"}>
         <td class="item_got check">
           <%= checkbox(:get_item, :got?, value: item.got?,
             phx_click: "change-got", phx_value_id: item.id) %>
@@ -35,6 +35,7 @@ defmodule ShoppingWeb.ListItemsGotComponent do
          </tr>
       <% end %>
       </tbody>
+    </table>
     """
   end
 end

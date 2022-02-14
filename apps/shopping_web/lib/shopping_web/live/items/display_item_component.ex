@@ -7,7 +7,7 @@ defmodule ShoppingWeb.DisplayItemComponent do
   alias Shopping.Items.Item
 
   def render(assigns) do
-    ~L"<%= content(@socket, @item) %>"
+    ~H"<%= content(@socket, @item) %>"
   end
 
   @doc """
