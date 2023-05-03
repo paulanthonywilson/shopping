@@ -39,12 +39,6 @@ defmodule ShoppingWeb.ChecklistLive.Show do
      |> assign(:got, [])}
   end
 
-  defp assign_all_items(socket) do
-    %{checklist: checklist} = socket.assigns
-    items = Items.list_by_got(checklist)
-    assign(socket, got: items.got, to_get: items.to_get)
-  end
-
   @impl true
   def handle_event(event, params, socket) do
     do_handle_event(event, params, clear_flash(socket))
