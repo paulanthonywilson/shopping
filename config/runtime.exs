@@ -112,4 +112,8 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  config :shopping,
+    auth_user: System.get_env("AUTH_USER"),
+    auth_password: System.get_env("AUTH_PASSWORD")
 end
