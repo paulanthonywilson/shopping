@@ -1,0 +1,46 @@
+<.to_get_table to_get={@to_get} checklist={@checklist} />
+
+<div class="my-5 py-0 bg-sky-50 flex flex-row flex-grow-1 content-center">
+  <.button phx-click="clear-filter" class="w-1/12 mx-3 bg-purple-900 my-0 w-8">X</.button>
+  <div class="w-11/12 pr-3">
+    <form phx-change="text-change" phx-submit="add-item">
+      <div class="flex flex-row space-x-4 space-y-0">
+        <div class="w-full py-0">
+          <.input
+            name="filter"
+            value={@filter}
+            autocomplete="off"
+            phx-debounce="300"
+            class=""
+            errors={@add_item_errors}
+          />
+        </div>
+        <div class="">
+          <.button phx-disable-with="Adding..." class="my-0 py-0 bg-purple-900 w-20">Add</.button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<.got_table got={@got} filter={@filter} />
+
+<.back navigate={~p"/checklists"}>Back to checklists</.back>
+
+<.modal
+  :if={@live_action == :edit}
+  id="category-modal"
+  show
+  on_cancel={JS.patch(~p"/checklists/#{@checklist}")}
+>
+  <.live_component
+    module={ShoppingWeb.Items.EditItemComponent}
+    id="edit_item"
+    item={@item}
+    action={@live_action}
+    checklist={@checklist}
+    categories={@categories}
+    patch={~p"/checklists/#{@checklist}"}
+  />
+</.modal>
+<div id="disconnected-overlay" phx-hook="DisconnectedOverlayHook" phx-update="ignore"></div>

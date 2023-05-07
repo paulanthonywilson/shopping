@@ -1,3 +1,0 @@
-# Shopping
-
-**TODO: Add description**

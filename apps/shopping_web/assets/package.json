@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "milligram": "^1.4.1",
-    "nprogress": "^0.2.0"
-  },
-  "scripts": {
-    "deploy": "cd .. && mix assets.deploy && rm -f ../../_build/esbuild*"
-  }
-}

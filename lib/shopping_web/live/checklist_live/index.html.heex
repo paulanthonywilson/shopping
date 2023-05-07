@@ -1,0 +1,41 @@
+<.header>
+  Listing Checklists
+  <:actions>
+    <.link patch={~p"/checklists/new"}>
+      <.button>New Checklist</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="checklists"
+  rows={@streams.checklists}
+  row_click={fn {_id, checklist} -> JS.navigate(~p"/checklists/#{checklist}") end}
+>
+  <:col :let={{_id, checklist}} label="Name"><%= checklist.name %></:col>
+  <:action :let={{_id, checklist}}>
+    <div class="sr-only">
+      <.link navigate={~p"/checklists/#{checklist}"}>Show</.link>
+    </div>
+    <.link patch={~p"/checklists/#{checklist}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, checklist}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: checklist.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="checklist-modal" show on_cancel={JS.patch(~p"/checklists")}>
+  <.live_component
+    module={ShoppingWeb.ChecklistLive.FormComponent}
+    id={@checklist.id || :new}
+    title={@page_title}
+    action={@live_action}
+    checklist={@checklist}
+    patch={~p"/checklists"}
+  />
+</.modal>
