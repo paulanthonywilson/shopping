@@ -462,7 +462,7 @@ defmodule ShoppingWeb.CoreComponents do
     assigns = Map.update(assigns, :extra_row_class_fn, nil, fn fun -> fun || fn _ -> "" end end)
 
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0 ">
+    <div class="px-4 sm:overflow-visible sm:px-0 ">
       <table class={["w-full sm:w-full", @extra_class]}>
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>

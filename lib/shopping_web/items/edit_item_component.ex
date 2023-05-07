@@ -24,7 +24,7 @@ defmodule ShoppingWeb.Items.EditItemComponent do
           label="Category"
         />
       </form>
-      <.button phx-click="delete" class="mt-3 bg-red-800" phx-target={@myself}>Delete</.button>
+      <.button phx-click="delete" class="mt-3 bg-red-700" phx-target={@myself}>Delete</.button>
     </div>
     """
   end
