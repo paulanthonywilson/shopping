@@ -340,7 +340,7 @@ defmodule Shopping.ItemsTest do
         Categories.create_category(%{ordering: 90, category_name: "Drinks", emoji: "🍹"})
 
       items =
-        for i <- 8..0 do
+        for i <- 8..0//-1 do
           category =
             case Integer.mod(i, 3) do
               0 -> high
